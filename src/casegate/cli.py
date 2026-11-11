@@ -6,13 +6,16 @@ function, prints through console.py and maps errors to exit codes (2 = bad input
 """
 
 import asyncio
+import sys
 from collections.abc import Callable
 from pathlib import Path
 
 import typer
 
 from casegate import __version__
+from casegate import console as term
 from casegate.cache import Cache
+from casegate.calibrate import calibrate, read_labels, render_calibration_md, write_template
 from casegate.compare import compare, render_comparison_md
 from casegate.console import make_console, progress, render_compare, render_gate, render_run
 from casegate.errors import SuiteError
@@ -202,6 +205,32 @@ def gate_cmd(
     else:
         render_gate(make_console(plain), result, base, current, max_drop, tags)
     raise typer.Exit(0 if result.passed else 1)
+
+
+@app.command("calibrate")
+def calibrate_cmd(
+    run_file: Path = typer.Option(..., "--run", help="The run JSON the labels refer to."),
+    labels: Path | None = typer.Option(None, "--labels", help="The human labels CSV."),
+    template: bool = typer.Option(False, "--template", help="Print a labels CSV to fill in."),
+    scorer: str | None = typer.Option(None, "--scorer", help="Only this scorer name."),
+    fmt: str = typer.Option("text", "--format", help="text, md or json."),
+    plain: bool = typer.Option(False, "--plain", help="Plain text, no colour."),
+) -> None:
+    """Join human labels to judge scores (SPEC §12). Never gates: exit 0, or 2 on bad input."""
+    _check_format(fmt, ("text", "md", "json"))
+    saved = _load_run(run_file)
+    if template:
+        return write_template(saved, sys.stdout, scorer=scorer)
+    if labels is None:
+        raise _fail(["--labels is required unless --template is given"])
+    try:
+        cal = calibrate(saved, read_labels(labels), scorer=scorer)
+    except SuiteError as err:
+        raise _fail(err.errors) from err
+    if fmt == "text":
+        return term.render_calibration(make_console(plain), cal)
+    text = render_calibration_md(cal) if fmt == "md" else cal.model_dump_json(indent=2) + "\n"
+    typer.echo(text, nl=False)
 
 
 @app.command()

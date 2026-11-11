@@ -50,7 +50,8 @@ casegate/                         (repo root = ~/Desktop/new-portfolio/evals)
   src/casegate/report.py          Markdown report (§9)
   src/casegate/compare.py         baseline comparison (§10)
   src/casegate/gate.py            gate rules + comment Markdown (§11)
-  src/casegate/calibrate.py       judge calibration (§12)
+  src/casegate/calibrate.py       judge calibration: labels, join, metrics, template (§12)
+  src/casegate/calibrate_md.py    calibration Markdown + the cell helpers the terminal shares (§12; split out for §1b)
   src/casegate/console.py         rich/plain terminal rendering (§14, docs/DESIGN.md)
   src/casegate/cli.py             typer app (§15)
   examples/__init__.py            empty (makes `examples.toy_agent` importable)
@@ -962,7 +963,9 @@ Gate console (§14), in this order: the headline sentence; one `⚠ <warning>` l
 
 ---
 
-## 12. Calibrate (`calibrate.py`)
+## 12. Calibrate (`calibrate.py`, `calibrate_md.py`)
+
+Amendment (M3 line-limit fix, 2026-11-11): `render_calibration_md` and its helpers (`headline_parts`, `confusion_rows`, `disagreement_cells`, `unmatched_cells`) live in `src/casegate/calibrate_md.py`, so `calibrate.py` stays under the §1b 250-line limit. `calibrate.py` re-exports `render_calibration_md`, so `from casegate.calibrate import render_calibration_md` still works.
 
 `casegate calibrate --labels labels.csv --run run.json [--scorer NAME] [--format text|md|json]`
 `casegate calibrate --template --run run.json [--scorer NAME] > labels.csv`
@@ -1003,7 +1006,7 @@ class Calibration(BaseModel):
     unmatched: list[LabelRow]
 ```
 
-- CSV columns (header required): `case_id,repeat,scorer,human_pass,note`. The header must contain these 5 columns in any order; extra columns are ignored; a missing column is an input error `labels.csv: missing column <name>`. `human_pass` is `1/0/true/false/yes/no` (case-insensitive) or empty. `--template` writes those columns plus read-only helper columns `judge_value,judge_passed,judge_reason,reply_excerpt` (ignored on read), one row per judge-scorer result in the run (including judge scores kept in `error` repeats), in run order (case, repeat, scorer), `human_pass` empty. `judge_value` = `f"{value:.3f}"`; `judge_passed` = `1`/`0`; `judge_reason` = the raw `Score.reason`; `reply_excerpt` = the first 200 chars of `output.text` with newlines replaced by spaces, or `""` when the repeat has no Output. The template is written with `csv.writer(sys.stdout, lineterminator="\n")` (the default is `\r\n`, FACTS §7), not rich.
+- CSV columns (header required): `case_id,repeat,scorer,human_pass,note`. The header must contain these 5 columns in any order; extra columns are ignored; a missing column is an input error `labels.csv: missing column <name>`. `human_pass` is `1/0/true/false/yes/no` (case-insensitive) or empty. `--template` writes those columns plus read-only helper columns `judge_value,judge_passed,judge_reason,reply_excerpt` (ignored on read), one row per judge-scorer result in the run (including judge scores kept in `error` repeats), in run order (case, repeat, scorer), `human_pass` empty. `judge_value` = `f"{value:.3f}"`; `judge_passed` = `1`/`0`; `judge_reason` = the raw `Score.reason`; `reply_excerpt` = the first 200 chars of `output.text` with newlines replaced by spaces, or `""` when the repeat has no Output. Amendment (M3 review fix, 2026-11-11): CSV formula guard. When `judge_reason` or `reply_excerpt` starts with `=`, `+`, `-`, `@`, a tab or a carriage return, `write_template` puts one `'` before it, because a spreadsheet runs such a cell as a formula and both texts are untrusted. The guard is applied after the 200-char cut, so a guarded excerpt can be 201 chars. The reader ignores helper columns, so the round trip does not change. The template is written with `csv.writer(sys.stdout, lineterminator="\n")` (the default is `\r\n`, FACTS §7), not rich.
 - Input errors (exit 2, message names the line number): an invalid `human_pass` value, a non-int `repeat`, a duplicate `(case_id, repeat, scorer)` key, a missing column.
 - Join, in this order: 1. Parse every row (invalid `human_pass` or `repeat` → exit 2). 2. A duplicate `(case_id, repeat, scorer)` among ALL rows, empty `human_pass` included → exit 2. 3. Rows with empty `human_pass` are skipped (not unmatched). 4. A remaining row joins only to a Score whose `Score.scorer` (the name) equals the row's `scorer` and that passes the active filter; any other row goes to `unmatched` and is excluded. `n` = the number of joined rows.
 - Active filter: judge scorer = `Score.type` in `{llm_judge, citation_support}`. Without `--scorer`, only judge scorers are used. `--scorer NAME` keeps only `Score.scorer == NAME` (any type); it replaces the judge filter.
@@ -1378,6 +1381,7 @@ Steps (every `run` step has `shell: bash`, which GitHub runs as `bash -eo pipefa
 2. Run (`id: run`), env `ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}`, `SRC`, `SUITE`, `REPEAT`, `CONC`:
    ```bash
    if [ -z "$SRC" ]; then SPEC_REQ="casegate[anthropic] @ ${GITHUB_ACTION_PATH}"; else SPEC_REQ="$SRC"; fi
+   case "$SPEC_REQ" in *$'\n'*|*$'\r'*) echo "::error::casegate: casegate-source must be one line"; exit 1 ;; esac
    echo "spec_req=$SPEC_REQ" >> "$GITHUB_OUTPUT"
    set +e
    uv run --no-project --with "$SPEC_REQ" casegate run "$SUITE" --repeat "$REPEAT" --concurrency "$CONC" --out "$RUNNER_TEMP/casegate-run.json" --plain
@@ -1387,10 +1391,11 @@ Steps (every `run` step has `shell: bash`, which GitHub runs as `bash -eo pipefa
    echo "pass-rate=$(jq -r '.summary.pass_rate // ""' "$RUNNER_TEMP/casegate-run.json" 2>/dev/null)" >> "$GITHUB_OUTPUT"
    exit 0
    ```
+   Amendment (M3 hardening, 2026-11-11): the step fails with `::error::casegate: casegate-source must be one line` when `SPEC_REQ` holds a newline or a carriage return, because a newline would write a second, forged key into `GITHUB_OUTPUT`.
    `--no-project` stops uv from syncing the caller repo's own project first. The python target module is found because the loader puts the cwd on `sys.path` (§3.3). `jq` is preinstalled on ubuntu runners.
 3. Gate (`id: gate`, `if: always() && steps.run.outputs.run_exit == '0' && inputs.gate == 'true'`), env `SPEC_REQ`, `BASELINE`, `MAX_DROP`, `MAX_ERRORS`, `MUST_PASS`:
    ```bash
-   MP=(); for t in $MUST_PASS; do MP+=(--must-pass-tag "$t"); done
+   set -f; MP=(); for t in $MUST_PASS; do MP+=(--must-pass-tag "$t"); done; set +f
    set +e
    uv run --no-project --with "$SPEC_REQ" casegate gate --baseline "$BASELINE" --run "$RUNNER_TEMP/casegate-run.json" \
      --max-drop "$MAX_DROP" --max-errors "$MAX_ERRORS" "${MP[@]}" --comment-out "$RUNNER_TEMP/casegate-comment.md" --plain
@@ -1400,6 +1405,7 @@ Steps (every `run` step has `shell: bash`, which GitHub runs as `bash -eo pipefa
    exit 0
    ```
    (`must-pass-tag` is space-separated; an empty value passes no flag, so the run file's tags apply, §11.)
+   Amendment (M3 hardening, 2026-11-11): `set -f` around the loop turns off file-name expansion, so a tag with `*` or `?` splits on spaces but never expands to file names.
 4. Upload (`if: always()`): `uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2` with `name: casegate-run`, `path:` the two lines `${{ runner.temp }}/casegate-run.json` and `${{ runner.temp }}/casegate-comment.md`, `if-no-files-found: warn`, `overwrite: true` (a re-run attempt uploads the same name again). The artifact root is flat: `casegate-run.json`, `casegate-comment.md`.
 5. Comment (`if: always() && inputs.comment == 'true' && inputs.gate == 'true' && github.event_name == 'pull_request'`), env `GH_TOKEN: ${{ github.token }}`, `GH_REPO: ${{ github.repository }}`, `PR`:
    ```bash
@@ -1436,6 +1442,7 @@ Triggers: `pull_request: {types: [opened, synchronize, reopened, labeled, unlabe
 - `must-pass-tag: adversarial` (literal, for the same reason: a PR could drop `must_pass_tags` from its own suite.yaml).
 
 Known limit (README Limitations): a same-repo PR can still edit `eval-gate.yml` itself; branch protection with CODEOWNERS on `.github/` and `evals/` is out of scope.
+Known limit (README Limitations, not fixed): eval-gate runs `uses: ./` from the PR head, so a same-repo PR author with write access can change the gate itself (`action.yml`, `src/`); fork PRs get no secret, so they skip the gate.
 
 On `push` to `main` (and on `workflow_dispatch`) the workflow runs with `gate: false`: it runs the suite and uploads the run artifact `casegate-run`, which is the source for a new baseline (BUILD runbook: `gh run download <id> -n casegate-run` then `cp casegate-run.json evals/baseline.json`).
 

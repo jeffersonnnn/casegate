@@ -1,0 +1,82 @@
+name: eval-gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    paths:
+      - "examples/**"
+      - "evals/**"
+      - "src/**"
+      - "action.yml"
+      - ".github/workflows/eval-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "examples/**"
+      - "evals/**"
+      - "src/**"
+      - "action.yml"
+      - ".github/workflows/eval-gate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: "eval-gate-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  eval-gate:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - name: Skip when there is no API key
+        if: env.ANTHROPIC_API_KEY == ''
+        shell: bash
+        run: |
+          echo "eval gate skipped: no ANTHROPIC_API_KEY secret (fork PR or secret not set)" >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice::eval gate skipped: no ANTHROPIC_API_KEY secret (fork PR or secret not set)"
+
+      - name: Check out
+        if: env.ANTHROPIC_API_KEY != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          # The suite runs PR code with the API key; keep the GITHUB_TOKEN out of .git/config.
+          persist-credentials: false
+
+      - name: Read the baseline from the base branch
+        if: env.ANTHROPIC_API_KEY != '' && github.event_name == 'pull_request'
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: git show "origin/$BASE_REF:evals/baseline.json" > "$RUNNER_TEMP/baseline.json"
+
+      - name: Block baseline changes without the baseline-update label
+        if: env.ANTHROPIC_API_KEY != '' && github.event_name == 'pull_request'
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HAS_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'baseline-update') }}
+        run: |
+          CHANGED=$(git diff --name-only "origin/$BASE_REF...HEAD")
+          if printf '%s\n' "$CHANGED" | grep -qx 'evals/baseline.json' && [ "$HAS_LABEL" != true ]; then
+            echo "::error::evals/baseline.json changed in this PR; add the label baseline-update to allow it"
+            exit 1
+          fi
+
+      - name: casegate
+        if: env.ANTHROPIC_API_KEY != ''
+        uses: ./
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          repeat: 5
+          gate: ${{ github.event_name == 'pull_request' }}
+          baseline: ${{ github.event_name == 'pull_request' && format('{0}/baseline.json', runner.temp) || 'evals/baseline.json' }}
+          # Literal copied from evals/tolerance.json max_drop (never read at run time: a PR could raise its own tolerance).
+          max-drop: "0.08"
+          # Literal, so a PR cannot drop must_pass_tags from its own suite.yaml.
+          must-pass-tag: adversarial

@@ -1,0 +1,158 @@
+name: casegate
+description: Run a casegate eval suite, gate it against a baseline and post a sticky PR comment.
+author: Jefferson Ighalo
+
+branding:
+  icon: check-circle
+  color: green
+
+inputs:
+  suite:
+    description: Suite directory.
+    required: false
+    default: evals
+  baseline:
+    description: Baseline run JSON to compare with.
+    required: false
+    default: evals/baseline.json
+  repeat:
+    description: Repeats per case.
+    required: false
+    default: "5"
+  concurrency:
+    description: Tasks in flight at once.
+    required: false
+    default: "8"
+  max-drop:
+    description: Largest allowed drop of the suite pass rate.
+    required: false
+    default: "0.03"
+  max-errors:
+    description: Largest allowed number of error repeats.
+    required: false
+    default: "0"
+  must-pass-tag:
+    description: Space-separated tags whose cases must pass. Empty uses the suite's list.
+    required: false
+    default: ""
+  anthropic-api-key:
+    description: Anthropic API key (pass a secret).
+    required: false
+    default: ""
+  comment:
+    description: Post or edit the sticky PR comment.
+    required: false
+    default: "true"
+  gate:
+    description: When false, run the suite and upload the run, but do not gate or comment.
+    required: false
+    default: "true"
+  casegate-source:
+    description: >-
+      Requirement used verbatim for casegate, with the extra, e.g. casegate[anthropic]==0.1.0.
+      Empty installs from the action's own checkout.
+    required: false
+    default: ""
+
+outputs:
+  passed:
+    description: "'true' when the gate exit code is 0, 'false' otherwise, empty when gate is false."
+    value: ${{ steps.gate.outputs.passed }}
+  pass-rate:
+    description: summary.pass_rate of the run, empty when it is null.
+    value: ${{ steps.run.outputs.pass-rate }}
+  run-file:
+    description: Path of the run JSON.
+    value: ${{ steps.run.outputs.run-file }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up uv
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+
+    - name: Run the suite
+      id: run
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        SRC: ${{ inputs.casegate-source }}
+        SUITE: ${{ inputs.suite }}
+        REPEAT: ${{ inputs.repeat }}
+        CONC: ${{ inputs.concurrency }}
+      run: |
+        if [ -z "$SRC" ]; then SPEC_REQ="casegate[anthropic] @ ${GITHUB_ACTION_PATH}"; else SPEC_REQ="$SRC"; fi
+        # A newline would let the value write a second, forged key into GITHUB_OUTPUT.
+        case "$SPEC_REQ" in *$'\n'*|*$'\r'*) echo "::error::casegate: casegate-source must be one line"; exit 1 ;; esac
+        echo "spec_req=$SPEC_REQ" >> "$GITHUB_OUTPUT"
+        set +e
+        uv run --no-project --with "$SPEC_REQ" casegate run "$SUITE" --repeat "$REPEAT" --concurrency "$CONC" --out "$RUNNER_TEMP/casegate-run.json" --plain
+        RUN_EXIT=$?
+        echo "run_exit=$RUN_EXIT" >> "$GITHUB_OUTPUT"
+        echo "run-file=$RUNNER_TEMP/casegate-run.json" >> "$GITHUB_OUTPUT"
+        echo "pass-rate=$(jq -r '.summary.pass_rate // ""' "$RUNNER_TEMP/casegate-run.json" 2>/dev/null)" >> "$GITHUB_OUTPUT"
+        exit 0
+
+    - name: Gate
+      id: gate
+      if: always() && steps.run.outputs.run_exit == '0' && inputs.gate == 'true'
+      shell: bash
+      env:
+        SPEC_REQ: ${{ steps.run.outputs.spec_req }}
+        BASELINE: ${{ inputs.baseline }}
+        MAX_DROP: ${{ inputs.max-drop }}
+        MAX_ERRORS: ${{ inputs.max-errors }}
+        MUST_PASS: ${{ inputs.must-pass-tag }}
+      run: |
+        # set -f: split the tags on spaces, but never expand a * or ? in a tag into file names.
+        set -f; MP=(); for t in $MUST_PASS; do MP+=(--must-pass-tag "$t"); done; set +f
+        set +e
+        uv run --no-project --with "$SPEC_REQ" casegate gate --baseline "$BASELINE" --run "$RUNNER_TEMP/casegate-run.json" \
+          --max-drop "$MAX_DROP" --max-errors "$MAX_ERRORS" "${MP[@]}" --comment-out "$RUNNER_TEMP/casegate-comment.md" --plain
+        GATE_EXIT=$?
+        echo "gate_exit=$GATE_EXIT" >> "$GITHUB_OUTPUT"
+        if [ "$GATE_EXIT" = 0 ]; then echo "passed=true" >> "$GITHUB_OUTPUT"; else echo "passed=false" >> "$GITHUB_OUTPUT"; fi
+        exit 0
+
+    - name: Upload the run
+      if: always()
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: casegate-run
+        path: |
+          ${{ runner.temp }}/casegate-run.json
+          ${{ runner.temp }}/casegate-comment.md
+        if-no-files-found: warn
+        overwrite: true
+
+    - name: Post or edit the PR comment
+      if: always() && inputs.comment == 'true' && inputs.gate == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        PR: ${{ github.event.pull_request.number }}
+      run: |
+        [ -s "$RUNNER_TEMP/casegate-comment.md" ] || exit 0
+        ID=$(gh api --paginate "repos/$GH_REPO/issues/$PR/comments?per_page=100" \
+          --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- casegate-gate -->"))) | .id' \
+          2>/dev/null | head -n1 || true)
+        if [ -n "$ID" ]; then
+          gh api -X PATCH "repos/$GH_REPO/issues/comments/$ID" -F body=@"$RUNNER_TEMP/casegate-comment.md" >/dev/null \
+            || echo "::notice::casegate: could not edit PR comment (fork or no permission)"
+        else
+          gh api -X POST "repos/$GH_REPO/issues/$PR/comments" -F body=@"$RUNNER_TEMP/casegate-comment.md" >/dev/null \
+            || echo "::notice::casegate: could not post PR comment (fork or no permission)"
+        fi
+
+    - name: Result
+      if: always()
+      shell: bash
+      env:
+        RUN_EXIT: ${{ steps.run.outputs.run_exit }}
+        GATE_EXIT: ${{ steps.gate.outputs.gate_exit }}
+        GATE: ${{ inputs.gate }}
+      run: |
+        if [ "${RUN_EXIT:-1}" != 0 ]; then exit "${RUN_EXIT:-1}"; fi
+        if [ "$GATE" = true ]; then exit "${GATE_EXIT:-1}"; fi
+        exit 0

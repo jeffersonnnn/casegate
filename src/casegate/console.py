@@ -18,6 +18,13 @@ from rich.progress import BarColumn, MofNCompleteColumn, Progress, TextColumn, T
 from rich.table import Table
 from rich.text import Text
 
+from casegate.calibrate import Calibration
+from casegate.calibrate_md import (
+    confusion_rows,
+    disagreement_cells,
+    headline_parts,
+    unmatched_cells,
+)
 from casegate.compare import Comparison, flip_cells, list_lines, metric_rows
 from casegate.fmt import fmt_cache, fmt_money, fmt_rate
 from casegate.gate import GateResult, check_glyph, headline, must_pass_rows
@@ -29,6 +36,7 @@ LABEL, VALUE, MUTED = "#8FA39A", "#E3ECE7", "#8FA39A"
 GREEN, RED, YELLOW, TRACK = "#3DDC84", "#FF5D5D", "#E8C547", "#2A3430"
 STATUS_TEXT = {"pass": ("✓ pass", GREEN), "fail": ("✗ fail", RED), "error": ("⚠ error", YELLOW)}
 MAX_ROWS = 20
+NUMERIC_COLUMNS = {"human pass", "human fail", "repeat", "judge value", "line"}
 
 
 def make_console(plain: bool) -> Console:
@@ -186,3 +194,40 @@ def render_gate(
         console.print(Text("✓ PASSED  exit 0", style=f"bold {GREEN}"))
     else:
         console.print(Text("✗ BLOCKED  exit 1", style=f"bold {RED}"))
+
+
+def _titled_table(title: str, columns: list[str], rows: list[list[str]]) -> Table:
+    table = Table(
+        title=title,
+        box=box.SIMPLE_HEAD,
+        header_style=f"bold {VALUE}",
+        title_justify="left",
+        title_style=VALUE,
+    )
+    for i, name in enumerate(columns):
+        # The id column never wraps, so a case id stays whole and searchable in CI logs.
+        justify: JustifyMethod = "right" if name in NUMERIC_COLUMNS else "left"
+        table.add_column(name, justify=justify, no_wrap=i == 0)
+    for row in rows:
+        table.add_row(*(Text(cell) for cell in row))
+    return table
+
+
+def render_calibration(console: Console, cal: Calibration) -> None:
+    line = Text()
+    for i, (label, value) in enumerate(headline_parts(cal)):
+        line.append(("  " if i else "") + label + " ", style=LABEL)
+        line.append(value, style=VALUE)
+    console.print(line, soft_wrap=True)
+    for note in cal.notes:
+        console.print(Text(f"⚠ {note}", style=YELLOW), soft_wrap=True)
+    console.print(_titled_table("", ["", "human pass", "human fail"], confusion_rows(cal)))
+    # Empty tables are left out, as in the comparison: the counts in the title say enough.
+    head = ["case", "repeat", "scorer", "judge value", "human", "judge reason", "note"]
+    rows = [disagreement_cells(d, markdown=False) for d in cal.disagreements]
+    if rows:
+        console.print(_titled_table(f"Disagreements ({len(rows)})", head, rows))
+    unmatched = [unmatched_cells(r) for r in cal.unmatched]
+    if unmatched:
+        cols = ["line", "case", "repeat", "scorer"]
+        console.print(_titled_table(f"Unmatched rows ({len(unmatched)})", cols, unmatched))

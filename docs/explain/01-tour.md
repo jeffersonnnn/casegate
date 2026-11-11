@@ -24,9 +24,9 @@ One request end to end: `casegate run evals --repeat 5`, then `casegate gate` on
 **Check:** why is `cost_usd` a `float | None` and not a plain float?
 
 ### Stop 1: CLI entry point
-`src/casegate/cli.py:111-160` `run`
+`src/casegate/cli.py:114-163` `run`
 **What:** `casegate run <suite_dir>` loads the suite, builds the cache and (only when a case needs one) the judge, runs it under a progress bar, writes the run JSON and `results/latest.md`, and prints the result table.
-**Why:** the CLI stays thin; all logic is in the library, so tests call `load_suite` and `run_suite` directly. A `SuiteError` maps to exit 2 and Ctrl-C to exit 130 with no file written (`src/casegate/cli.py:146-149`). Failed cases still exit 0, because the gate decides, not `run` (`src/casegate/cli.py:123`).
+**Why:** the CLI stays thin; all logic is in the library, so tests call `load_suite` and `run_suite` directly. A `SuiteError` maps to exit 2 and Ctrl-C to exit 130 with no file written (`src/casegate/cli.py:149-152`). Failed cases still exit 0, because the gate decides, not `run` (`src/casegate/cli.py:126`).
 **Say it like this:** "`run` only measures and writes a run file; it never fails the build. The gate is a separate step."
 **Check:** what exit code does `run` give when a case fails, and when `suite.yaml` has no `target.version`?
 
@@ -110,7 +110,7 @@ One request end to end: `casegate run evals --repeat 5`, then `casegate gate` on
 ### Stop 12: the Markdown report
 `src/casegate/report.py:140-149` `render_markdown`
 **What:** turns a run into `results/latest.md`: a header line with pass rate ± std, a summary table with this-run and full cost, the pass rate per tag, the 10 worst cases with the failing scorer and reason, and the errors.
-**Why:** a reader needs the headline and the reason a case failed, not 75 raw repeats. The cells are shared with the terminal table (`src/casegate/console.py:25`), so both always agree.
+**Why:** a reader needs the headline and the reason a case failed, not 75 raw repeats. The cells are shared with the terminal table (`src/casegate/console.py:32`), so both always agree.
 **Say it like this:** "After every run there is a Markdown page that says the number, what it cost, and the worst cases with the exact scorer and reason."
 **Check:** after a fully cached re-run, what do "cost this run" and "cost full" show? (`results/latest.md`: $0.00 and $0.05)
 
@@ -123,13 +123,28 @@ One request end to end: `casegate run evals --repeat 5`, then `casegate gate` on
 
 ### Stop 14: the gate checks and exit codes
 `src/casegate/gate.py:77-113` `gate`
-**What:** runs every check and reports all of them: `scored`, `max_drop` (baseline pass rate minus run pass rate at most the tolerance), `max_errors`, and one `must_pass:<tag>` check per tag (every repeat of every tagged case must pass). The CLI exits 0 when all pass, 1 when any fails, 2 on bad input (`src/casegate/cli.py:182-204` `gate_cmd`).
+**What:** runs every check and reports all of them: `scored`, `max_drop` (baseline pass rate minus run pass rate at most the tolerance), `max_errors`, and one `must_pass:<tag>` check per tag (every repeat of every tagged case must pass). The CLI exits 0 when all pass, 1 when any fails, 2 on bad input (`src/casegate/cli.py:185-207` `gate_cmd`).
 **Why:** the average can hide one broken safety case, so must-pass cases are checked on their own. The tolerance comes from measured noise: 0.08 (`evals/tolerance.json` `max_drop`, `docs/adr/0006-gate-tolerance-from-measured-variance.md`). A NaN pass rate fails closed (`src/casegate/gate.py:99`).
 **Say it like this:** "The gate blocks on a drop larger than the measured noise, on any error, or on any failed adversarial case, and it shows every failed check at once."
 **Check:** what did the gate do on the baseline against itself, and on a copy with 3 cases flipped to fail? (FACTS.md §8: exit 0 and exit 1)
 
 ### Stop 15: the sticky PR comment
-[PLANNED: M3: action.yml comment step]
+`action.yml:128-146` `Post or edit the PR comment`
+**What:** on a pull request, the action looks for an earlier comment by `github-actions[bot]` whose body holds the marker `<!-- casegate-gate -->`; it edits that comment with PATCH, or posts a new one with POST when there is none.
+**Why:** one comment that changes in place gives the reviewer the current verdict without a stack of old ones. The marker is the first line of the body that `gate` writes (`src/casegate/gate.py:184-191` `write_comment`). A failed call only prints a notice, because the job summary already holds the table; the step exit code does not decide the check. The last step does (`action.yml:148-158` `Result`): it exits with the gate exit code and counts an empty code as 1, so it fails closed.
+**Say it like this:** "The action finds its own comment by a hidden marker and edits it, so every push updates one comment, and the check result comes from the gate exit code."
+**Check:** why does the search also check `user.login`, and not only the marker? (A user could paste the marker into their own comment; the bot cannot edit it.) Is the edit-in-place behaviour observed on a real PR yet? (No: OPEN-2 in SPEC §20; the demo PR is a human step.)
 
 ### Stop 16: baseline from the base branch
-[PLANNED: M3: .github/workflows/eval-gate.yml]
+`.github/workflows/eval-gate.yml:51-56` `Read the baseline from the base branch`
+**What:** on a pull request, the workflow reads `evals/baseline.json` from the base branch with `git show "origin/$BASE_REF:evals/baseline.json"` and passes that copy to the action as `baseline` (`.github/workflows/eval-gate.yml:78`).
+**Why:** a PR must not lower its own bar (`docs/adr/0008-baseline-from-base-branch.md`). For the same reason the PR cannot change three other inputs: a PR that edits `evals/baseline.json` fails without the label `baseline-update` (`.github/workflows/eval-gate.yml:58-69`), and `max-drop: "0.08"` and `must-pass-tag: adversarial` are literals, not read from PR files (`.github/workflows/eval-gate.yml:79-82`). Checkout keeps the token out of `.git/config`, because the suite runs PR code with the API key (`.github/workflows/eval-gate.yml:48-49`).
+**Say it like this:** "The bar comes from main, not from the PR: the baseline is read from the base branch, the tolerance and the must-pass tag are literals, and a baseline change needs a label."
+**Check:** what can a same-repo PR still change to pass the gate? (`eval-gate.yml` itself and `action.yml`; branch protection with CODEOWNERS is out of scope, SPEC §18.3 Known limit.)
+
+### Stop 17: calibration, the judge against a person
+`src/casegate/calibrate.py:142-180` `calibrate`
+**What:** joins human pass/fail labels from a CSV to the judge scores in one run by `(case_id, repeat, scorer)`, and reports agreement, Cohen's kappa, a confusion table and every disagreement.
+**Why:** a judge score is only worth gating on if a person gives the same verdict. Kappa removes the agreement that chance alone gives (`src/casegate/calibrate.py:131-139` `_kappa`); when one class is the only class, kappa is undefined and the output says so instead of printing a number. Calibration never gates: it exits 0, or 2 on bad input (`src/casegate/cli.py:210-233` `calibrate_cmd`).
+**Say it like this:** "I label 40 judge results by hand, and casegate tells me how often the judge agrees with me, corrected for chance, and lists each case where we disagree."
+**Check:** a judge and a person agree on 7 of 10 rows. The judge passes 7 and the person passes 6. What is kappa? (0.35: `tests/test_calibrate.py:47` `test_metrics_match_hand_computation`.) What is the real kappa? ([TBD: needs `evals/labels.csv`, 40 human labels, OPEN-5].)

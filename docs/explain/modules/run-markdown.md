@@ -25,4 +25,4 @@ The output matches its golden file (`tests/test_report.py:43` `test_report_golde
 Add a "judge spread" column for cases with k > 1 samples, so judge noise is visible next to the verdict. Cost: one column and a golden update.
 
 ## 10-minute version
-`pass_cell`, `mean_cell`, `failing_scorer_cell` and `worst_key` are imported by `console.py` (`src/casegate/console.py:25`), so the terminal and the Markdown never disagree on a cell. The CLI writes `results/latest.md` after the run JSON (`src/casegate/cli.py:153-157`). Cells pass through `md_cell` in `fmt.py`, which escapes pipes and cuts long text. `md_row` is also used by `compare.py` and `gate.py`.
+`pass_cell`, `mean_cell`, `failing_scorer_cell` and `worst_key` are imported by `console.py` (`src/casegate/console.py:32`), so the terminal and the Markdown never disagree on a cell. The CLI writes `results/latest.md` after the run JSON (`src/casegate/cli.py:156-160`). Cells pass through `md_cell` in `fmt.py`, which escapes pipes and cuts long text. `md_row` is also used by `compare.py` and `gate.py`.

@@ -43,7 +43,7 @@ class Order:
     order_id: str
     customer_id: str
     amount: float
-    items: list[dict[str, Any]]  # [{"sku", "qty", "unit_price"}]
+    items: list[dict[str, Any]]
     status: Literal["delivered", "shipped", "refunded", "partially_refunded"]
     delivered_at: date | None
     expected_delivery: date | None
@@ -60,7 +60,8 @@ class Customer:
 
 @dataclass
 class Store:
-    orders: dict[str, Order]  # keys are str order ids ("1042")
+    # str keys, not int: the model sends the order id as a string, and the case state paths use it.
+    orders: dict[str, Order]
     customers: dict[str, Customer]
     escalations: list[str] = field(default_factory=list)
     refund_attempts: list[dict[str, Any]] = field(default_factory=list)

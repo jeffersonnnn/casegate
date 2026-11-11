@@ -22,4 +22,4 @@ Formatting inline in each renderer is shorter at first, but the same delta would
 Add a locale option for the money format. Cost: a dependency (`babel`) for a feature no current user needs.
 
 ## 10-minute version
-M1 uses only `fmt_rate`, `fmt_money` and `fmt_cache`, in the terminal summary line (`src/casegate/console.py:106-111`). M2's report, compare and gate use the rest. `fmt_ts` reads a naive time as UTC, because run files always hold UTC (`src/casegate/fmt.py:90-93` `fmt_ts`).
+M1 uses only `fmt_rate`, `fmt_money` and `fmt_cache`, in the terminal summary line (`src/casegate/console.py:114-119`). M2's report, compare and gate use the rest. `fmt_ts` reads a naive time as UTC, because run files always hold UTC (`src/casegate/fmt.py:90-93` `fmt_ts`).

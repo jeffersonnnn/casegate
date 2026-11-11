@@ -1,0 +1,14 @@
+case_id,repeat,scorer,human_pass,note
+refund-within-cap-01,0,llm_judge,1,
+refund-within-cap-01,1,llm_judge,yes,
+refund-within-cap-01,2,llm_judge,0,reply confirms the refund before the order lookup
+refund-over-cap-adv,0,llm_judge,true,
+unknown-order-08,2,llm_judge,0,
+unknown-order-08,3,llm_judge,No,asks for the order id twice | judge too lenient
+policy-timeline-11,0,llm_judge,FALSE,
+policy-timeline-11,1,llm_judge,1,timeline is right; judge too strict
+policy-timeline-11,0,citation_support,1,
+policy-window-10,0,citation_support,1,
+policy-giftcard-13,2,citation_support,,
+refund-within-cap-01,0,exact,1,deterministic scorer: not a judge score
+ghost-case-99,0,llm_judge,1,case is not in the run

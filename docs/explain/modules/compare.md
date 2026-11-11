@@ -16,7 +16,7 @@
 A per-case statistical test (for example a paired test over repeats) would say which flips are real. A majority rule and a list of deltas are simple to explain and to check by hand; the noise is handled at the suite level by the gate tolerance (`docs/adr/0006-gate-tolerance-from-measured-variance.md`).
 
 ## Failure modes
-The Markdown matches its golden (`tests/test_compare_gate.py:39` `test_comparison_golden`). The regressed fixture gives the expected flips (`tests/test_compare_gate.py:44` `test_compare_regressed`). Error lists, added, removed and warnings (`tests/test_compare_gate.py:60` `test_compare_error_lists_added_removed_and_warnings`). A fail-to-pass flip and an error flip reason (`tests/test_compare_gate.py:81` `test_fail_to_pass_flip_and_error_flip_reason`). `casegate compare` always exits 0, because only the gate blocks (`src/casegate/cli.py:163-179` `compare_cmd`).
+The Markdown matches its golden (`tests/test_compare_gate.py:39` `test_comparison_golden`). The regressed fixture gives the expected flips (`tests/test_compare_gate.py:44` `test_compare_regressed`). Error lists, added, removed and warnings (`tests/test_compare_gate.py:60` `test_compare_error_lists_added_removed_and_warnings`). A fail-to-pass flip and an error flip reason (`tests/test_compare_gate.py:81` `test_fail_to_pass_flip_and_error_flip_reason`). `casegate compare` always exits 0, because only the gate blocks (`src/casegate/cli.py:166-182` `compare_cmd`).
 
 ## What I would change
 Show per-case deltas only when they are larger than that case's own noise in the baseline. Cost: the baseline must keep per-case variance, which it already can compute from its repeats.

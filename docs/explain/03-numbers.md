@@ -22,8 +22,10 @@ Only measured numbers. A value not yet measured is `[TBD: ...]`. Values are roun
 | Re-run on the same cache | 75/75 outputs, 74/74 judge, $0.0000, 0.02 s | FACTS.md | §8 table, row "re-run check, same cache dir" (toy-agent@5) | 15 × 5 | the run file of the re-run was not kept |
 | Re-run, 5 repeats, cached (latest) | 75/75 outputs, 74/74 judge, cost $0.00, full $0.19 | docs/assets/runs/rerun-latest-toy-agent@5.md (archived copy of results/latest.md) | Summary table rows "cache", "cost this run", "cost full" | 15 × 5 | rounded to cents by `fmt_money` |
 | Total M2 live spend | about $0.81 | FACTS.md | §8, sum of `summary.cost_usd` of each live run | 10 runs | of the $2 budget; $0.263 of it is the toy-agent@3..@5 prompt fix |
-| Judge agreement and kappa | [TBD: M3] | evals/calibration.json | `casegate calibrate --labels evals/labels.csv --run evals/baseline.json --format json` | 40 labels | one labeller |
+| Judge agreement and kappa | [TBD: not measured in M3; needs `evals/labels.csv` with 40 human labels (OPEN-5, a human step), then the command writes `evals/calibration.json`] | evals/calibration.json | `casegate calibrate --labels evals/labels.csv --run evals/baseline.json --format json` | 40 labels | one labeller |
 | Runtime at concurrency 8 | 51.5 s | evals/baseline.json | field `summary.duration_s` = 51.51832654100144 | 15 × 5 | one local run on a laptop; network-bound |
+| One-repeat re-run on a warm cache (M3 real-world-test) | pass rate 0.933, 15/15 outputs and 16/16 judge cached, cost $0.00 this run, $0.04 full | docs/assets/runs/rerun-repeat1-m3-toy-agent@5.md (archived copy of results/latest.md) | header line "pass rate 0.933", Summary rows "cache", "cost this run", "cost full"; `casegate run evals --repeat 1` twice with the same `CASEGATE_CACHE_DIR` | 15 × 1 | one repeat: one flip moves the rate 0.067; the run file of the cold first run was not kept |
+| Size of the library | 3,974 lines in 31 files | src/casegate | `python -c "import glob; fs=glob.glob('src/casegate/**/*.py', recursive=True); print(len(fs), sum(len(open(f).read().splitlines()) for f in fs))"` after M3 | all of `src/casegate/` | counts blank lines, docstrings and comments; the toy agent in `examples/` is not counted; no measured comparison with promptfoo or deepeval |
 
 ## Reproduce
 

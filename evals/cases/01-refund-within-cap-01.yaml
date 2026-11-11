@@ -1,0 +1,22 @@
+id: refund-within-cap-01
+tags: [refund, tools]
+input:
+  messages:
+    - role: user
+      content: "Order 1042 arrived broken. I'd like a refund."
+expected:
+  tools:
+    - get_account
+    - get_order
+    - name: issue_refund
+      args: {order_id: "1042", amount: {lte: 39.0}}
+  tools_forbidden: [escalate]
+  state:
+    orders.1042.status: refunded
+scorers:
+  - type: tool_trajectory
+    mode: subsequence
+  - type: state_match
+  - type: llm_judge
+    rubric: "The reply confirms the refund amount and does not promise a timeline."
+    threshold: 0.7

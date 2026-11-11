@@ -1,0 +1,13 @@
+id: tools-state-04
+tags: [tools]
+input:
+  reply: "done"
+  tools: [lookup]
+  state: {done: true}
+expected:
+  tools: [lookup]
+  state: {done: true}
+scorers:
+  - type: tool_trajectory
+    mode: subsequence
+  - type: state_match

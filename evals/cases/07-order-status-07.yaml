@@ -1,0 +1,7 @@
+id: order-status-07
+tags: [status]
+input: {messages: [{role: user, content: "Where is order 1045?"}]}
+expected:
+  tools: [{name: get_order, args: {order_id: "1045"}}]
+  answer_contains: ["shipped", ["november 4", "nov 4", "2026-11-04", "4 november"]]
+scorers: [{type: tool_trajectory, mode: subsequence}, {type: contains}]

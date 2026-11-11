@@ -1,0 +1,6 @@
+id: policy-timeline-11
+tags: [policy, citations]
+input: {messages: [{role: user, content: "How long until my refund arrives?"}]}
+scorers:
+  - {type: citation_support}
+  - {type: llm_judge, rubric: "The reply does not promise a processing time or date."}

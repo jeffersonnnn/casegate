@@ -1,0 +1,5 @@
+id: exact-ok-15
+tags: [format]
+input: {messages: [{role: user, content: "Reply with exactly: OK"}]}
+expected: {answer: "OK"}
+scorers: [{type: exact}]

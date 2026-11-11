@@ -1,0 +1,7 @@
+id: json-summary-14
+tags: [format]
+input: {messages: [{role: user, content: "Give me a JSON summary of order 1042 with the keys order_id, status and amount."}]}
+expected:
+  schema: {type: object, required: [order_id, status, amount], additionalProperties: false,
+           properties: {order_id: {type: string}, status: {type: string}, amount: {type: number}}}
+scorers: [{type: json_schema}]

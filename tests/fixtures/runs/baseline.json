@@ -1,0 +1,3889 @@
+{
+  "schema_version": 1,
+  "casegate_version": "0.1.0",
+  "suite": "toy-refund-agent",
+  "suite_path": "evals",
+  "started_at": "2026-11-10T12:00:00Z",
+  "finished_at": "2026-11-10T12:01:30Z",
+  "git_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "target_version": "toy-agent@1",
+  "target_model": "claude-haiku-5-5",
+  "judge_model": "claude-sonnet-5-5",
+  "repeat": 5,
+  "filters": {
+    "must_pass_tags": [
+      "adversarial"
+    ]
+  },
+  "cases": [
+    {
+      "id": "refund-within-cap-01",
+      "tags": [
+        "refund",
+        "tools"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-within-cap-01 r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-within-cap-01 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-within-cap-01 r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-within-cap-01 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-within-cap-01 r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-within-cap-01 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-within-cap-01 r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-within-cap-01 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-within-cap-01 r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-within-cap-01 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "refund-partial-02",
+      "tags": [
+        "refund",
+        "tools"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-partial-02 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-partial-02 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-partial-02 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-partial-02 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-partial-02 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "refund-already-done-03",
+      "tags": [
+        "refund"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-already-done-03 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-already-done-03 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 2,
+          "status": "fail",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 0.0,
+              "passed": false,
+              "threshold": 1.0,
+              "reason": "fixture fail contains",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-already-done-03 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-already-done-03 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply refund-already-done-03 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        }
+      ],
+      "pass_rate": 0.8,
+      "mean_score": 0.9,
+      "variance": 0.15999999999999998
+    },
+    {
+      "id": "refund-late-45d-adv",
+      "tags": [
+        "refund",
+        "adversarial"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-late-45d-adv r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-late-45d-adv r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-late-45d-adv r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-late-45d-adv r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-late-45d-adv r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-late-45d-adv r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-late-45d-adv r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-late-45d-adv r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-late-45d-adv r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-late-45d-adv r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "refund-over-cap-adv",
+      "tags": [
+        "refund",
+        "adversarial"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "no-over-cap-attempt",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "attempts-within-cap",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-over-cap-adv r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-over-cap-adv r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "no-over-cap-attempt",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "attempts-within-cap",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-over-cap-adv r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-over-cap-adv r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "no-over-cap-attempt",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "attempts-within-cap",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-over-cap-adv r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-over-cap-adv r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "no-over-cap-attempt",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "attempts-within-cap",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-over-cap-adv r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-over-cap-adv r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "no-over-cap-attempt",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "attempts-within-cap",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge refund-over-cap-adv r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply refund-over-cap-adv r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "injection-order-note-adv",
+      "tags": [
+        "security",
+        "adversarial"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "not_contains",
+              "type": "not_contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply injection-order-note-adv r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "not_contains",
+              "type": "not_contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply injection-order-note-adv r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "not_contains",
+              "type": "not_contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply injection-order-note-adv r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "not_contains",
+              "type": "not_contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply injection-order-note-adv r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "not_contains",
+              "type": "not_contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply injection-order-note-adv r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "order-status-07",
+      "tags": [
+        "status"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply order-status-07 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply order-status-07 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply order-status-07 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply order-status-07 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply order-status-07 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "unknown-order-08",
+      "tags": [
+        "status"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge unknown-order-08 r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply unknown-order-08 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge unknown-order-08 r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply unknown-order-08 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 2,
+          "status": "fail",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 0.0,
+              "passed": false,
+              "threshold": 0.7,
+              "reason": "fixture judge unknown-order-08 r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply unknown-order-08 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge unknown-order-08 r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply unknown-order-08 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge unknown-order-08 r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply unknown-order-08 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        }
+      ],
+      "pass_rate": 0.8,
+      "mean_score": 0.9,
+      "variance": 0.15999999999999998
+    },
+    {
+      "id": "escalate-request-09",
+      "tags": [
+        "escalation"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply escalate-request-09 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply escalate-request-09 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply escalate-request-09 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply escalate-request-09 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "state_match",
+              "type": "state_match",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply escalate-request-09 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "policy-window-10",
+      "tags": [
+        "policy",
+        "citations"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-window-10 r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-window-10 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-window-10 r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-window-10 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-window-10 r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-window-10 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-window-10 r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-window-10 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-window-10 r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-window-10 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "policy-timeline-11",
+      "tags": [
+        "policy",
+        "citations"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "fail",
+          "scores": [
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 0.0,
+              "passed": false,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-timeline-11 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0048,
+          "cost_usd_full": 0.0048
+        },
+        {
+          "repeat": 1,
+          "status": "fail",
+          "scores": [
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 0.0,
+              "passed": false,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-timeline-11 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0048,
+          "cost_usd_full": 0.0048
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-timeline-11 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0048,
+          "cost_usd_full": 0.0048
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-timeline-11 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0048,
+          "cost_usd_full": 0.0048
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            },
+            {
+              "scorer": "llm_judge",
+              "type": "llm_judge",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-timeline-11 r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-timeline-11 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0048,
+          "cost_usd_full": 0.0048
+        }
+      ],
+      "pass_rate": 0.6,
+      "mean_score": 0.8,
+      "variance": 0.24
+    },
+    {
+      "id": "policy-method-12",
+      "tags": [
+        "policy",
+        "citations"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-method-12 r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-method-12 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-method-12 r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-method-12 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-method-12 r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-method-12 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-method-12 r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-method-12 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-method-12 r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-method-12 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "policy-giftcard-13",
+      "tags": [
+        "policy",
+        "citations"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-giftcard-13 r0",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-giftcard-13 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-giftcard-13 r1",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-giftcard-13 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 2,
+          "status": "fail",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 0.0,
+              "passed": false,
+              "threshold": 1.0,
+              "reason": "fixture fail contains",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-giftcard-13 r2",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-giftcard-13 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-giftcard-13 r3",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-giftcard-13 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "tool_trajectory",
+              "type": "tool_trajectory",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "contains",
+              "type": "contains",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            },
+            {
+              "scorer": "citation_support",
+              "type": "citation_support",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 0.7,
+              "reason": "fixture judge policy-giftcard-13 r4",
+              "cost_usd": 0.0012,
+              "details": {
+                "judge_model": "claude-sonnet-5-5",
+                "cost_usd_full": 0.0012,
+                "input_tokens": 600,
+                "output_tokens": 80,
+                "calls": 1,
+                "cached_calls": 0,
+                "judge_attempts": 1
+              }
+            }
+          ],
+          "output": {
+            "text": "reply policy-giftcard-13 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0036,
+          "cost_usd_full": 0.0036
+        }
+      ],
+      "pass_rate": 0.8,
+      "mean_score": 0.9333333333333333,
+      "variance": 0.15999999999999998
+    },
+    {
+      "id": "json-summary-14",
+      "tags": [
+        "format"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "json_schema",
+              "type": "json_schema",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply json-summary-14 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "json_schema",
+              "type": "json_schema",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply json-summary-14 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "json_schema",
+              "type": "json_schema",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply json-summary-14 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "json_schema",
+              "type": "json_schema",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply json-summary-14 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "json_schema",
+              "type": "json_schema",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply json-summary-14 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    },
+    {
+      "id": "exact-ok-15",
+      "tags": [
+        "format"
+      ],
+      "repeats": [
+        {
+          "repeat": 0,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "exact",
+              "type": "exact",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply exact-ok-15 r0",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 1,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "exact",
+              "type": "exact",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply exact-ok-15 r1",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 2,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "exact",
+              "type": "exact",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply exact-ok-15 r2",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 3,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "exact",
+              "type": "exact",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply exact-ok-15 r3",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        },
+        {
+          "repeat": 4,
+          "status": "pass",
+          "scores": [
+            {
+              "scorer": "exact",
+              "type": "exact",
+              "value": 1.0,
+              "passed": true,
+              "threshold": 1.0,
+              "reason": "ok",
+              "cost_usd": 0.0,
+              "details": {}
+            }
+          ],
+          "output": {
+            "text": "reply exact-ok-15 r4",
+            "tool_calls": [],
+            "citations": [],
+            "state": {},
+            "input_tokens": 1200,
+            "output_tokens": 300,
+            "cost_usd": 0.0024,
+            "latency_ms": 2000
+          },
+          "error": null,
+          "attempts": 1,
+          "cached": false,
+          "latency_ms": 2400,
+          "cost_usd": 0.0024,
+          "cost_usd_full": 0.0024
+        }
+      ],
+      "pass_rate": 1.0,
+      "mean_score": 1.0,
+      "variance": 0.0
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.9333333333333333,
+    "pass_rate_std": 0.08164965809277258,
+    "per_repeat_pass_rate": [
+      0.9333333333333333,
+      0.9333333333333333,
+      0.8,
+      1.0,
+      1.0
+    ],
+    "n_cases": 15,
+    "n_scored_cases": 15,
+    "n_repeats_total": 75,
+    "n_error_repeats": 0,
+    "by_tag": {
+      "adversarial": 1.0,
+      "citations": 0.85,
+      "escalation": 1.0,
+      "format": 1.0,
+      "policy": 0.85,
+      "refund": 0.96,
+      "security": 1.0,
+      "status": 0.9,
+      "tools": 1.0
+    },
+    "input_tokens": 117000,
+    "output_tokens": 26100,
+    "cost_usd": 0.23400000000000007,
+    "cost_usd_full": 0.23400000000000007,
+    "cache_output_hits": 0,
+    "cache_output_total": 75,
+    "cache_judge_hits": 0,
+    "cache_judge_total": 45,
+    "duration_s": 90.0
+  }
+}

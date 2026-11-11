@@ -1,0 +1,5 @@
+id: policy-giftcard-13
+tags: [policy, citations]
+input: {messages: [{role: user, content: "Can I get a refund for gift card order 2002?"}]}
+expected: {tools_forbidden: [issue_refund], answer_contains: [["gift card"]]}
+scorers: [{type: tool_trajectory}, {type: contains}, {type: citation_support}]

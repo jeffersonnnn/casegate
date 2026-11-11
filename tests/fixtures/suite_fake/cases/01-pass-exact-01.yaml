@@ -1,0 +1,8 @@
+id: pass-exact-01
+tags: [core]
+input:
+  reply: "OK"
+expected:
+  answer: "OK"
+scorers:
+  - type: exact

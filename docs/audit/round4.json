@@ -1,0 +1,62 @@
+[
+ {
+  "part": "M4 site + logo renders + README banner + pages.yml, and M5 launch assets (two videos, logo PNG/GIF, banner PNG/GIF)",
+  "could_build": true,
+  "findings": [
+   {
+    "kind": "contradiction",
+    "where": "BUILD.md \"Rules for builders\" (line 'No number goes into README or the site unless a run file in `evals/` or `results/` shows it') vs docs/DESIGN.md §8 (tick-row flips and the term-gate.txt panel come from the `docs/assets/demo-pr-regression/` pair) and SPEC §16.3 'Every published number (README, site, videos) is read from these files'",
+    "problem": "DESIGN §8 tells the M4 site to show numbers from `docs/assets/demo-pr-regression/{baseline.json,casegate-run.json}`: the flipped ticks and the whole `casegate gate` panel (pass-rate drop, checks, flips). The M5 videos show the same blocked comment. That folder is neither `evals/` nor `results/`, so the BUILD rule forbids these numbers. SPEC §16.3 lists only `evals/` files as the sources of published numbers. An M4 or M5 real-world-test agent that applies the BUILD rule can mark the site panel or the video numbers as broken. A site builder can also drop the demo pair and take the flips from `evals/baseline.json`, which gives no flips.",
+    "proposed_fix": "BUILD.md Rules for builders: 'No number goes into README, the site or the videos unless a run file in `evals/`, `results/` or `docs/assets/demo-pr-regression/` shows it (the demo pair is the source only for the demo PR numbers: tick-row flips, `term-gate.txt`, and the blocked/passed comment).' SPEC §16.3, append to the last bullet: '; the demo PR numbers (tick-row flips, the gate panel, the PR comment in the videos) come from `docs/assets/demo-pr-regression/baseline.json` and `casegate-run.json` (docs/DESIGN.md §8).'"
+   }
+  ]
+ },
+ {
+  "part": "M0 + M1 core: pyproject.toml, models.py, prices.py, retry.py, loader.py, targets (python, http), runner.py aggregation and concurrency, cli `run` command",
+  "could_build": true,
+  "findings": [
+   {
+    "kind": "contradiction",
+    "where": "SPEC.md §1 Lint ([tool.ruff] rules incl. B, no bugbear config) vs SPEC.md §11 (`must_pass_tag: list[str] | None = typer.Option(None, \"--must-pass-tag\")`) and §15 `run --tag T` (repeatable list option)",
+    "problem": "I observed this with ruff 0.7.4 and the latest ruff, using rules E,F,I,UP,B,SIM,RUF. A typer option with a mutable annotation fails ruff with B008. The failing line is `must_pass_tag: list[str] | None = typer.Option(None, \"--must-pass-tag\")`, and the `run --tag` option fails the same way. `int` options such as `--repeat` pass. So the cli.py style that SPEC pins cannot pass the SPEC §1 lint config. Two agents can then pick different fixes: the M0 pyproject agent can add a ruff option, and the M1/M2 cli agents can use `Annotated[...]`, `# noqa` or a module-level singleton.",
+    "proposed_fix": "Add this to the SPEC §1 Lint row: `[tool.ruff.lint.flake8-bugbear] extend-immutable-calls = [\"typer.Option\", \"typer.Argument\"]` (the M0 pyproject.toml writes it). Then cli.py keeps the `x: T = typer.Option(...)` default style that §7.4, §11 and §15 show, with no noqa and no Annotated."
+   },
+   {
+    "kind": "contradiction",
+    "where": "SPEC.md §5.1 module-layout bullet ('models.py, errors.py and retry.py import no other casegate module except errors') vs SPEC.md §7.3 `with_retries(fn, cfg: RetryConfig, ...)`",
+    "problem": "`with_retries` is typed with `RetryConfig`, and `RetryConfig` is defined in models.py (§2). retry.py must import casegate.models, even if only under TYPE_CHECKING. That breaks the §5.1 rule as written. A retry builder or a Review/Explain stage that checks the rule will flag or rewrite the import, for example to a duck-typed Protocol. The import is safe because models.py imports nothing from casegate, so there is no import cycle.",
+    "proposed_fix": "Replace the bullet with: \"`errors.py` and `models.py` import no other casegate module. `retry.py` imports only `casegate.errors` and `casegate.models` (for `RetryConfig`). None of the three imports scorers, judge, cache or runner.\""
+   }
+  ]
+ },
+ {
+  "part": "The six deterministic scorers and matchers: exact, contains, not_contains, json_schema, tool_trajectory (all modes, forbidden, arg matchers), state_match, matchers.py, scorer registry and naming, thresholds",
+  "could_build": true,
+  "findings": [
+   {
+    "kind": "contradiction",
+    "where": "BUILD.md M1 row (Delivers) and workflows/m1-core.js 'scorers' task vs SPEC.md §5.1 registry keys",
+    "problem": "BUILD.md and the m1 'scorers' task both say that in M1 \"the registry holds these 7 types in 6 scorer files (contains.py has contains and not_contains)\". The M1 list is exact, contains, not_contains, json_schema, tool_trajectory and state_match. That is 6 types in 5 scorer files (exact.py, contains.py, json_schema.py, tool_trajectory.py, state_match.py). SPEC §5.1's final count (8 keys in 7 files) is correct. A builder who trusts the M1 count will look for a 7th M1 type. The loader's M1 unknown-type line `(known: <sorted registry keys>)` is asserted exactly in tests/test_loader.py, so the registry contents must be certain.",
+    "proposed_fix": "In BUILD.md M1 and workflows/m1-core.js (scorers task), replace \"the registry holds these 7 types in 6 scorer files\" with \"the registry holds these 6 types in 5 scorer files (exact, contains, not_contains, json_schema, tool_trajectory, state_match; contains.py has contains and not_contains)\". Add to SPEC §3.3 or §17: \"In M1 the unknown-type line reads `(known: contains, exact, json_schema, not_contains, state_match, tool_trajectory)`.\""
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §5.1 Building (json_schema.check errors) and §17 tests/test_loader.py ('each §3.3 error')",
+    "problem": "`json_schema: schema_path not found: <path>` and `json_schema: cannot parse <path>: <msg>` do not say what `<path>` is. It could be the `schema_path` param as written, the path resolved against suite.root, or an absolute path. The scorers agent writes the message, but the loader agent writes tests/test_loader.py in parallel, and that file asserts the exact text of each §3.3/§5.1 load error. The two agents can pick different renderings, and pytest then fails.",
+    "proposed_fix": "Add to SPEC §5.1 Building: \"In the json_schema errors, `<path>` is the `schema_path` param exactly as written in the case file (not resolved, not quoted), and `<msg>` is `str(exc)` of the json/yaml parse exception. Example: `case c1 scorer json_schema: json_schema: schema_path not found: schemas/missing.json`.\""
+   }
+  ]
+ },
+ {
+  "part": "report.py (Markdown), compare.py, gate.py (checks, exit codes, comment Markdown), calibrate.py (CSV, kappa, template), console.py terminal rendering, golden tests",
+  "could_build": true,
+  "findings": [
+   {
+    "kind": "gap",
+    "where": "SPEC.md §9 fmt.py (`md_cell`, `fmt_delta_money`) and §17 tests/test_report.py row; workflows/m1-core.js runner task (writes fmt.py) vs workflows/m2-judge-gate-toy.js outputs task (writes the fmt.py tests in tests/test_report.py)",
+    "problem": "fmt.py is written by the M1 runner agent, and nothing tests it in M1. Its tests (\"md_cell\", \"deltas\", \"money < $0.01\") are written later, in M2, by a different agent, and that agent is told not to change fmt.py. Three rules are not pinned, so each agent can choose differently and the M2 tests then fail against the M1 code. (1) md_cell: the order of the newline replace, the `|` escape and the cut. (2) md_cell: whether the `…` counts in `limit`, and what happens when the cut splits an escaped `\\|`. (3) fmt_delta_money: whether `0 < |b−a| < 0.01` uses 4 decimals, like fmt_money. The sentence \"The same applies to money with 2 or 4 decimals\" suggests 4 decimals, but the examples show only 2.",
+    "proposed_fix": "Add to SPEC §9: \"`md_cell(s, limit)`: 1. replace `\\r\\n`, then `\\n`, then `\\r` with one space; 2. replace `|` with `\\|`; 3. if `len(s) > limit`: `s = s[:limit-1]`, drop one trailing `\\` if the cut split a `\\|`, then append `…` (the result is at most `limit` chars, ellipsis included). `fmt_delta_money(a, b)`: `d = b − a`; use the same decimals rule as fmt_money (4 decimals when `0 < |d| < 0.01` after rounding to 4, else 2), sign `+`/U+2212, zero rule as below: `+$0.0050`, `−$0.02`, `$0.00`.\" Also add to the M1 runner task: \"write tests/test_fmt.py for every fmt.py rule\". Then the M2 outputs agent tests only report.py, and tests and code come from one agent."
+   }
+  ]
+ }
+]

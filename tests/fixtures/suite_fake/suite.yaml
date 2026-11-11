@@ -1,0 +1,11 @@
+name: suite-fake
+target:
+  type: python
+  path: tests.fixtures.suite_fake.target:run
+  version: fake@1
+  model: none
+concurrency: 4
+retries:
+  attempts: 2
+  backoff_s: [0.01]
+must_pass_tags: [core]

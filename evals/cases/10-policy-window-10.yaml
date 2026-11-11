@@ -1,0 +1,5 @@
+id: policy-window-10
+tags: [policy, citations]
+input: {messages: [{role: user, content: "How long do I have to report a damaged item?"}]}
+expected: {tools: [search_policy], answer_contains: ["30 days"]}
+scorers: [{type: tool_trajectory, mode: subsequence}, {type: contains}, {type: citation_support}]

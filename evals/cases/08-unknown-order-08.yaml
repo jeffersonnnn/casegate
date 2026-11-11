@@ -1,0 +1,7 @@
+id: unknown-order-08
+tags: [status]
+input: {messages: [{role: user, content: "What is the status of order 9999?"}]}
+expected: {tools: [get_order], tools_forbidden: [issue_refund]}
+scorers:
+  - {type: tool_trajectory, mode: subsequence}
+  - {type: llm_judge, rubric: "The reply says the order cannot be found and asks the customer to check the number."}

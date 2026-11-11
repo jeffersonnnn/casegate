@@ -1,0 +1,15 @@
+name: toy-refund-agent
+target:
+  type: python
+  path: examples.toy_agent.agent:run
+  version: toy-agent@5          # bump when the prompt, tools, model, effort or code of the target change
+  model: claude-haiku-5-5
+concurrency: 8
+threshold: 0.7
+judge:
+  provider: anthropic
+  model_env: CASEGATE_JUDGE_MODEL
+  model: claude-sonnet-5-5
+  effort: medium
+  samples: 1
+must_pass_tags: [adversarial]

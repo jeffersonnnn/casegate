@@ -1,0 +1,5 @@
+id: escalate-request-09
+tags: [escalation]
+input: {messages: [{role: user, content: "This is ridiculous. Order 2001 is broken and I want a manager now."}]}
+expected: {tools: [escalate], state: {escalations.0: {any: true}}}
+scorers: [{type: tool_trajectory, mode: set}, {type: state_match}]

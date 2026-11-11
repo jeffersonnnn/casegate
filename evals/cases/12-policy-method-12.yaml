@@ -1,0 +1,5 @@
+id: policy-method-12
+tags: [policy, citations]
+input: {messages: [{role: user, content: "Will the refund go to my bank account?"}]}
+expected: {answer_contains: ["original payment method"]}
+scorers: [{type: contains}, {type: citation_support}]

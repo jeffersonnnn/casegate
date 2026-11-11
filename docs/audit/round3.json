@@ -1,0 +1,170 @@
+[
+ {
+  "part": "examples/toy_agent (store.py, policy.md, prompt.md, agent.py) + evals/suite.yaml, 15 case YAMLs, baseline and tolerance procedure",
+  "could_build": true,
+  "findings": [
+   {
+    "kind": "contradiction",
+    "where": "SPEC.md §16.1 issue_refund rules (\"sets status to refunded when fully refunded (math.isclose(refunded_amount, amount, abs_tol=0.005))\") vs §16.2 case 2 (refund-partial-02, expected state orders.1043.status: partially_refunded)",
+    "problem": "Inside issue_refund, `amount` is the tool argument (the refund amount of this call), not the order total. A literal build compares the order's new refunded_amount with the call amount. Case 2 refunds 12.5 on order 1043 (total 25.00): refunded_amount 12.5 equals the call amount 12.5, so status becomes `refunded`, and the case 2 state_match plus the `partial` test in tests/test_toy_store.py fail. The previous rule in the same sentence already uses `order.amount`; this one kept the bare name from the round 2 proposed fix.",
+    "proposed_fix": "Replace the text with: \"On success it adds `amount` to `order.refunded_amount` and sets `order.status` to `refunded` when the order is fully refunded (`math.isclose(order.refunded_amount, order.amount, abs_tol=0.005)`), else `partially_refunded`. The success result `status` is that new `order.status`.\""
+   },
+   {
+    "kind": "contradiction",
+    "where": "docs/adr/0006-gate-tolerance-from-measured-variance.md Decision; CONTEXT.md \"Tolerance\" vs SPEC.md §16.3 tolerance formula",
+    "problem": "ADR 0006 says max-drop = 2 x measured std rounded up to the next 0.01, and CONTEXT says \"2 times the standard deviation\". SPEC §16.3 adds a floor: max(0.02, ...). The two give different values when 2*std < 0.02, for example std 0.0 (all 5 repeats give the same suite pass rate, which is plausible at effort low): the ADR gives 0.00 and SPEC gives 0.02. The ADR has the same date as SPEC, so the SPEC rule \"an ADR that is newer wins\" does not settle it. The README \"how the tolerance was chosen\" section cites ADR 0006 and could then state a method that differs from evals/tolerance.json.",
+    "proposed_fix": "Add to ADR 0006: \"## Amendment (2026-11-11, SPEC §16.3) The tolerance has a floor of 0.02: max_drop = max(0.02, ceil(round(2*std*100, 6))/100). A std of 0 must not give a zero tolerance.\" Change CONTEXT.md \"Tolerance\" to: \"The measured max drop: 2 times the standard deviation of the baseline suite pass rate across repeats, rounded up to the next 0.01, and at least 0.02.\""
+   }
+  ]
+ },
+ {
+  "part": "judge.py (AnthropicJudge, OpenAICompatJudge, FakeJudge), llm_judge, citation_support, cache.py, runner wiring of judge + cache",
+  "could_build": true,
+  "findings": [
+   {
+    "kind": "gap",
+    "where": "workflows/m2-judge-gate-toy.js TASKS (judge, cache) + BUILD.md M1/M2 rows + SPEC.md §5.1 (REGISTRY in scorers/__init__.py)",
+    "problem": "In M1, scorers/__init__.py has a REGISTRY of only the 7 deterministic types, and the loader rejects llm_judge/citation_support as unknown. In M2, the parallel 'judge' agent writes scorers/llm_judge.py and scorers/citation_support.py. No M2 task (judge, cache, outputs, toy) or the Wire step is told to add the two classes to REGISTRY in scorers/__init__.py. No task is told to update the M1 test_loader assertion that llm_judge is an unknown type either. If the judge agent assumes another agent owns the shared file, evals/ cases 1-15 fail to load ('unknown scorer type llm_judge'), and the live stage cannot run. If two agents both edit __init__.py, they can conflict.",
+    "proposed_fix": "Add to the M2 'judge' task text: 'Register LlmJudgeScorer (type \"llm_judge\", needs_judge=True) and CitationSupportScorer (type \"citation_support\", needs_judge=True) in REGISTRY in src/casegate/scorers/__init__.py (you are the only M2 build agent that edits this file), and update any M1 test in tests/test_loader.py that asserts llm_judge or citation_support is an unknown type, and the expected `(known: ...)` list in the unknown-scorer message test.' Add to BUILD.md M2 Delivers: 'scorers/__init__.py REGISTRY gains llm_judge and citation_support'."
+   }
+  ]
+ },
+ {
+  "part": "Deterministic scorers and matchers: exact, contains, not_contains, json_schema, tool_trajectory, state_match, matchers.py, scorer registry and naming, thresholds",
+  "could_build": false,
+  "findings": [
+   {
+    "kind": "gap",
+    "where": "SPEC.md §3.3 required-inputs table and §5.1/§5.2/§5.4 (check() messages) vs workflows/m1-core.js loader task (test_loader asserts exact §3.3 lines)",
+    "problem": "In M1 the loader agent and the scorers agent run in parallel. The loader agent must write tests that assert the exact §3.3 line for each error, and some of these lines come from scorer check() calls. Several of those message bodies are not pinned anywhere: (1) a required input that is missing (exact, contains, not_contains, state_match, tool_trajectory, json_schema with none or with both of schema and schema_path); (2) a malformed state_match path; (3) every MatcherError text except all_amounts_lte (bad key set, any not true, regex not a str or does not compile, contains not a str, gte/lte/all_amounts_lte not a number, one_of empty or not a list). The `<field>` in `<type>: <field> must not be empty` is also unclear: it can be the param name (`items`) or the expected key (`answer_contains`). Each agent will guess a different text, so the cross-agent tests fail.",
+    "proposed_fix": "Add to SPEC §3.3, after the required-inputs table: 'check() message bodies (build_scorers adds the `case <id> scorer <name>: ` prefix): missing input `<type>: needs <param> or expected.<field>` (exact: `exact: needs answer or expected.answer`; contains: `contains: needs items or expected.answer_contains`; not_contains: `not_contains: needs items or expected.answer_not_contains`; state_match: `state_match: needs non-empty state or expected.state`; tool_trajectory: `tool_trajectory: needs tools, forbidden, expected.tools or expected.tools_forbidden`); json_schema both: `json_schema: schema and schema_path are mutually exclusive`; json_schema none: `json_schema: needs schema, schema_path or expected.schema`. Empty list: `<field>` is the key as written in the source, so `contains: items must not be empty` or `contains: expected.answer_contains must not be empty` (an empty any-of group uses the same field). Malformed path: `state_match: malformed path <render_value(path)>`. Matcher errors: `<type>: <where>: <MatcherError message>`, where `<where>` is `<tool name>.<arg>` for tool args and the path for state. MatcherError messages: `invalid matcher keys: <sorted keys joined by ', '>`, `any must be true`, `regex must be a string`, `invalid regex: <re.error msg>`, `contains must be a string`, `<key> must be a number`, `one_of must be a non-empty list`, `all_amounts_lte is valid only in state_match`.'"
+   },
+   {
+    "kind": "contradiction",
+    "where": "SPEC.md §5.1 'Building' (errors += Cls.check(case, params, Path(suite.root))) vs §5.1 'Validating expected' and §3.3 'Scorer params and check() errors'",
+    "problem": "check() takes no scorer name, and §5.1 says build_scorers appends check() results unchanged (`errors += Cls.check(...)`). But §5.1 'Validating expected' says check() errors must read `case <id> scorer <name>: expected.<field>: <msg>`, and §3.3 says every check() line has the prefix `case <id> scorer <name>: `. check() cannot produce a name it does not receive. The pinned json_schema strings (`json_schema: schema_path not found: <path>`) have no prefix. So it is not clear which side adds the prefix. The loader agent tests the final line and the scorers agent writes both sides, so the two agents can disagree.",
+    "proposed_fix": "In §5.1 Building, replace `errors += Cls.check(case, params, Path(suite.root))` with `errors += [f\"case {case.id} scorer {name}: {e}\" for e in Cls.check(case, params, Path(suite.root))]`. Add: 'check() returns message bodies without the prefix (for example `expected.answer: Input should be a valid string` or `json_schema: schema_path not found: <path>`); build_scorers adds the prefix to every check() line and to every params validation line (`<loc joined by '.'>: <msg>`).'"
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §3.3 'Unknown scorer' line vs §5.1 build_scorers; BUILD.md M1 ('the loader rejects llm_judge/citation_support as unknown until M2')",
+    "problem": "The unknown-type line is `<file> case <0-based index in the file>: unknown scorer type <t> (...)`. build_scorers(case, suite) does not know the index of the case in its file, because Case stores only source_file. So only the loader can write this line. But the spec does not say which side checks the type, or what build_scorers does with an unknown type: a KeyError on REGISTRY, a SuiteError, or a skip. The loader agent (it calls build_scorers for every case) and the scorers agent (it writes build_scorers) work in parallel and must agree. In M1 this path runs for every llm_judge case.",
+    "proposed_fix": "Add to §3.3 and §5.1: 'The loader checks every `cfg.type` against `REGISTRY` while it still knows the file and index. It writes the unknown-type line and does not call build_scorers for that case. build_scorers assumes known types. For an unknown type it adds `case <id>: unknown scorer type <t> (known: <sorted keys>)` to its SuiteError and skips that scorer. This path is reached only by hand-built cases in tests.'"
+   }
+  ]
+ },
+ {
+  "part": "report.py, compare.py, gate.py, calibrate.py, console.py terminal rendering, golden tests",
+  "could_build": false,
+  "findings": [
+   {
+    "kind": "blocker",
+    "where": "SPEC.md §14 (console API `render_calibration(console, cal: Calibration)`) vs workflows/m2-judge-gate-toy.js task 'outputs' and workflows/m3-calibrate-action-publish.js task 'calibrate'",
+    "problem": "The M2 'outputs' agent must write the full console.py with the exact §14 API, and that API includes `render_calibration(console, cal: Calibration)`. `Calibration` is defined in calibrate.py, which does not exist until M3. So in M2, console.py cannot import `Calibration`, and mypy --strict fails (TYPE_CHECKING does not help because mypy still resolves the module). The M3 'calibrate' task says 'Write only these files' and does not list console.py, but `calibrate --format text` needs `render_calibration`. No agent is allowed to both own the type and write the renderer.",
+    "proposed_fix": "SPEC §14, add: \"`render_calibration` is added in M3 by the calibrate task. In M2, console.py has every other function in this list.\" M2 outputs task, add: \"Do not write render_calibration (M3 adds it).\" M3 calibrate task, change the file list to: \"Write src/casegate/calibrate.py, add render_calibration to src/casegate/console.py (do not change the other console functions), and the calibrate CLI...\""
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §17 'Fixtures and helpers' (make_runs.py, calibrate.md golden); workflows m2 'outputs' vs m3 'calibrate'",
+    "problem": "The M2 outputs agent writes make_runs.py and tests/fixtures/runs/baseline.json. The M3 calibrate agent must build the golden `calibrate.md` from 'a hand-written labels fixture against baseline.json'. The calibrate join needs Scores with `type` llm_judge or citation_support, stable scorer names, reasons, and Output.text for `reply_excerpt`. SPEC only fixes ids, tags, flip counts, shas, versions and timestamps. If M2 fills each repeat with one placeholder deterministic Score, M3 has nothing to join and must edit a file it does not own. The two goldens then disagree.",
+    "proposed_fix": "SPEC §17 make_runs.py, add: \"Each case's repeats hold one Score per scorer of that case in §16.2, with the resolved names (§5.1 naming, e.g. `llm_judge`, `no-over-cap-attempt`, `attempts-within-cap`), the matching `type`, threshold 1.0 for deterministic scorers and 0.7 for judge scorers, value 1.0 on a pass and 0.0 on the failing scorer of a failed repeat, and reason `ok` / `fixture fail <scorer>` (judge scorers: `fixture judge <case id> r<k>`). Every non-error repeat has `Output(text=f\"reply {case_id} r{k}\")`. The error repeat has no Output and `error = \"RuntimeError: fixture error\"`. Labels fixture for calibrate.md: tests/fixtures/labels.csv, written by M3.\""
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §11 (comment-out, GITHUB_STEP_SUMMARY), §17 tests/test_compare_gate.py; workflows/m2-judge-gate-toy.js tasks 'outputs' and WIRE STEP",
+    "problem": "test_compare_gate.py must test exit codes 0/1/2 through typer CliRunner and the GITHUB_STEP_SUMMARY append. The outputs agent writes this test, but it may not edit cli.py. The `gate` command only appears later, in the Wire step. So the outputs agent cannot run its own tests. SPEC also does not say which module writes `--comment-out` and appends to the step summary. If the outputs agent puts it in gate.py and the Wire agent also writes it in cli.py, the summary gets the comment twice.",
+    "proposed_fix": "SPEC §11, add: \"gate.py defines `write_comment(body: str, comment_out: Path | None) -> None`: it writes `comment_out` when given and appends `body` to `$GITHUB_STEP_SUMMARY` when that env var is set. cli.py calls it once and has no other file writes for gate.\" §17: move the CliRunner exit-code and step-summary tests from tests/test_compare_gate.py to tests/test_cli.py, and make the Wire step write them. test_compare_gate.py tests `write_comment` directly with tmp_path and monkeypatch."
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §11 `resolve_must_pass_tags(run, cli_tags: list[str] | None)`, §15 gate `--must-pass-tag`, §18.1 step 3",
+    "problem": "The rule says 'the --must-pass-tag values if given; else run.filters must_pass_tags'. gate.py (outputs agent) writes the function. cli.py (Wire agent) declares the option. Typer 0.29.1 passes None for an unset `Optional[list[str]] = typer.Option(None)` (observed), but [] if the option is declared with default []. If gate.py checks `is not None` and cli.py uses a [] default, the Action (empty MUST_PASS passes no flag) silently drops every must-pass check.",
+    "proposed_fix": "SPEC §11, add: \"`resolve_must_pass_tags` returns `list(cli_tags)` when `cli_tags` is non-empty, else `[str(t) for t in run.filters.get(\"must_pass_tags\", [])]`. None and [] mean the same: not given. cli.py declares `must_pass_tag: list[str] | None = typer.Option(None, \"--must-pass-tag\")`.\""
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §17 (goldens end with exactly one `\\n`; `assert_golden` in tests/conftest.py written by M0) vs §9/§11/§12 render_* return values written in M2/M3",
+    "problem": "M0 writes `assert_golden(name, text)` and M2/M3 write the renderers. SPEC does not say whether `render_markdown`, `render_gate_comment`, `render_comparison_md` and `render_calibration_md` return text that ends with `\\n`, or whether assert_golden adds the newline. If assert_golden compares exactly and a renderer returns no final newline, the golden written with UPDATE_GOLDEN=1 breaks the one-`\\n` rule. If assert_golden normalises, the files written to --comment-out, latest.md and the appended job summary have no final newline, so two appends join on one line.",
+    "proposed_fix": "SPEC §17, add: \"Every render_* function that returns str returns text that ends with exactly one `\\n`. For console goldens, the test passes `console.file.getvalue()`. `assert_golden` compares `text` exactly with the file and, with UPDATE_GOLDEN=1, writes `text` unchanged. It fails when `text` does not end with exactly one `\\n`.\""
+   }
+  ]
+ },
+ {
+  "part": "M0 + M1 core: pyproject.toml, models.py, prices.py, retry.py, loader.py, targets (python, http), runner.py aggregation and concurrency, cli run",
+  "could_build": false,
+  "findings": [
+   {
+    "kind": "gap",
+    "where": "SPEC.md §3.3 (unknown scorer message) vs §5.1 build_scorers; workflows/m1-core.js loader and scorers tasks",
+    "problem": "The unknown-scorer line is `<file> case <i>: unknown scorer type <t> (known: ...)`. It needs the 0-based index of the document in the file. `build_scorers(case, suite)` (scorers agent) cannot know that index, because Case has no such field. Only the loader (a different agent) knows it. The docs do not say which side emits this line. They also do not say what `build_scorers` does with an unknown type: raise KeyError, raise SuiteError with some other line, or skip it. If the loader checks the type and also calls build_scorers, test_loader gets an extra or different line, or a KeyError crash. The runner also calls build_scorers on hand-built cases.",
+    "proposed_fix": "Add to SPEC §3.3: \"The loader checks each `ScorerConfig.type` against `REGISTRY` itself, right after `Case` validation. For each unknown type it adds `<file> case <i>: unknown scorer type <t> (known: <sorted keys>)`, and it does not call `build_scorers` for that case. `build_scorers` also checks types first. For each unknown type it collects `case <id>: unknown scorer type <t> (known: <sorted keys>)` and raises SuiteError with those lines before it resolves names or builds any scorer. It never raises KeyError.\""
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §3.3 last bullet ('target cannot be built') and §4.1/§4.2; workflows/m1-core.js loader vs targets tasks",
+    "problem": "test_loader (loader agent) must assert the exact line for 'target cannot be built', and §3.3 says tests assert exact formats. The build_target side is written by the targets agent at the same time. The docs pin no message lines for: import error, missing function, sync function and missing header env var. They also do not say that build_target raises only SuiteError. If build_target raises ImportError or AttributeError, the loader must catch any exception, and the CLI (which catches only SuiteError) crashes when run_suite rebuilds the target.",
+    "proposed_fix": "Add to SPEC §4: \"build_target raises only SuiteError, with exactly one of these lines: `target.path: cannot import <module>: <ExcType>: <msg>`; `target.path: <module> has no attribute <func>`; `target.path: <module>:<func> must be an async function`; `target.headers.<Header>: environment variable <NAME> is not set`. The loader adds `err.errors` to its collected list unchanged.\""
+   },
+   {
+    "kind": "gap",
+    "where": "SPEC.md §17 tests/test_cli.py row; workflows/m1-core.js (loader task writes tests/fixtures/suite_fake, runner task writes tests/test_cli.py)",
+    "problem": "test_cli runs `run` end to end on tests/fixtures/suite_fake and checks the run JSON. The loader agent writes that fixture at the same time, with only a loose brief: 4 cases, one made to fail, one that raises RetryableError once. The runner agent cannot know the case ids, the expected pass_rate, pass_rate_std or attempts. It also cannot know whether the retry waits 1 s (the default backoff) or whether 'once' means per process or per case. So test_cli assertions are a guess, and the M1 anchor 'matches a hand computation' has no fixed expected value.",
+    "proposed_fix": "Pin the fixture in SPEC §17: suite.yaml `name: suite-fake`, `target: {type: python, path: tests.fixtures.suite_fake.target:run, version: fake@1, model: none}`, `concurrency: 4`, `retries: {attempts: 2, backoff_s: [0.01]}`, `must_pass_tags: [core]`. Cases (one per file, 01..04): `pass-exact-01` [core] exact answer \"OK\"; `fail-contains-02` [core] contains [\"missing-word\"]; `retry-once-03` [retry] exact \"OK\"; `tools-state-04` [tools] tool_trajectory subsequence [lookup] + state_match {done: true}. target.py: `async def run(case_input)` returns `Output(text=case_input[\"reply\"], tool_calls=[ToolCall(name=t) for t in case_input.get(\"tools\", [])], state=case_input.get(\"state\", {}))`. When `case_input.get(\"retry_once\")` is true, it raises `RetryableError(\"busy\", retry_after=0)` on the first call per process only (module-level flag). Expected with `--repeat 3`: case pass_rates 1, 0, 1, 1; summary.pass_rate 0.75; pass_rate_std 0.0; n_error_repeats 0; exactly one RepeatResult with attempts 2."
+   },
+   {
+    "kind": "contradiction",
+    "where": ".env.example (TOY_AGENT_MODEL, TOY_AGENT_EFFORT) vs SPEC.md §16.1 agent.py",
+    "problem": ".env.example lists 'Optional: toy agent overrides (defaults: claude-haiku-5-5, low)' with TOY_AGENT_MODEL and TOY_AGENT_EFFORT. SPEC §16.1 says MODEL and EFFORT are constants 'no env overrides' and must equal suite.yaml target.model. An override would also make the output cache key stale.",
+    "proposed_fix": "Delete the TOY_AGENT_MODEL and TOY_AGENT_EFFORT lines and their comment from .env.example. SPEC §16.1 stays as written."
+   }
+  ]
+ },
+ {
+  "part": "action.yml (composite), ci.yml, eval-gate.yml, release.yml, sticky PR comment, demo regression PR, M3 human steps",
+  "could_build": true,
+  "findings": [
+   {
+    "kind": "contradiction",
+    "where": "workflows/m4-brand-site.js PRIOR_ANCHORS and workflows/m5-launch-assets.js PRIOR_ANCHORS (the [m3] entries) vs BUILD.md \"M3 demo PR\" and workflows/m3-calibrate-action-publish.js ANCHORS",
+    "problem": "The M4 and M5 real-world-test stages must re-observe M3 anchors that still describe the old two-PR demo. One anchor says \"a re-run of eval-gate on the regression PR PATCHes the SAME comment id (OPEN-2), and the fix PR shows its own ✓ PASSED sticky comment and a green check\". Another says \"the demo regression PR ... shows a sticky comment starting ✗ and a failing eval-gate check\". BUILD now settles ONE PR with two pushes, closed unmerged. No fix PR will exist. After push 2 the same comment says ✓ PASSED and the last check is green, so the PR no longer \"shows\" ✗. Both anchors can never be observed true. That forces all_load_bearing_observed = false in M4 and M5, and those milestones can never be done.",
+    "proposed_fix": "In both m4-brand-site.js and m5-launch-assets.js, replace the two stale [m3] demo anchors with the m3 ANCHORS wording: '[m3] the demo PR on github.com/jeffersonnnn/casegate (branch demo/gate, closed unmerged) has ONE sticky comment from github-actions[bot] that starts with <!-- casegate-gate --> and says ✓ PASSED; docs/assets/pr-comment-blocked.png shows the same comment as ✗ BLOCKED after push 1, and the comment id recorded in BUILD M3 step 2 equals the current id with a later updated_at (OPEN-2)' and '[m3] the latest eval-gate check on the demo PR is green, and docs/assets/demo-pr-regression/casegate-run.json gated against docs/assets/demo-pr-regression/baseline.json with the measured --max-drop exits 1'."
+   },
+   {
+    "kind": "contradiction",
+    "where": "BUILD.md \"M3 demo PR\" step 2 vs SPEC.md §1 repository layout (docs/assets/demo-pr-regression/{casegate-run.json,baseline.json})",
+    "problem": "Step 2 runs `gh run download <run-id> -n casegate-run -D docs/assets/demo-pr-regression/`. The §18.1 artifact holds both casegate-run.json and casegate-comment.md, so the folder also gets casegate-comment.md. The SPEC layout lists only two files, and step 4 says to commit 'the files under docs/assets/'. The builder has to guess whether to commit or delete the comment file.",
+    "proposed_fix": "SPEC §1 layout: change the line to `docs/assets/demo-pr-regression/{casegate-run.json,casegate-comment.md,baseline.json}   (M3: the demo PR's push-1 artifact as downloaded, plus the base-branch baseline its gate used)`. M4 and M5 still read only casegate-run.json and baseline.json."
+   },
+   {
+    "kind": "contradiction",
+    "where": "README.md Status table (Cold-build audit row) and docs/audit/README.md \"Round 2 fixes\" vs BUILD.md \"M3 demo PR\"",
+    "problem": "README.md says round 2 has '1 waits for the user'. docs/audit/README.md says finding 31 (demo PR structure) 'was not applied ... that text is unchanged'. BUILD already holds the user's decision (one PR, two pushes, 2026-11-11 audit round 2 Q1), and the last paragraph of docs/audit/README.md confirms it. The stale lines suggest the demo procedure is still open.",
+    "proposed_fix": "README.md Status row: 'round 2: 101 findings, 100 applied, 1 settled later by the user (one demo PR, two pushes)'. docs/audit/README.md Round 2 paragraph: replace 'that text is unchanged' with 'the user later chose ONE PR with two pushes (BUILD \"M3 demo PR\")'."
+   }
+  ]
+ },
+ {
+  "part": "M4 site + logo renders + README banner + pages.yml; M5 launch assets (videos, logo PNG/GIF, banner PNG/GIF)",
+  "could_build": false,
+  "findings": [
+   {
+    "kind": "contradiction",
+    "where": "workflows/m4-brand-site.js and workflows/m5-launch-assets.js, PRIOR_ANCHORS ([m3] items) vs BUILD.md \"M3 demo PR\" and workflows/m3-calibrate-action-publish.js ANCHORS",
+    "problem": "The M4 and M5 PRIOR_ANCHORS still carry the old two-PR demo: '[m3] the demo regression PR ... shows a sticky comment starting ✗' and '[m3] a re-run of eval-gate on the regression PR PATCHes the SAME comment id (OPEN-2), and the fix PR shows its own ✓ PASSED sticky comment and a green check'. BUILD.md and the m3 workflow now define ONE PR with two pushes, closed unmerged, and no separate fix PR. The M4 and M5 real-world-test agents must re-observe these anchors. No fix PR exists, so they report 'broken' or 'not_observed', all_load_bearing_observed is false, and M4 and M5 can never finish.",
+    "proposed_fix": "In both m4-brand-site.js and m5-launch-assets.js, replace the two stale [m3] PR items in PRIOR_ANCHORS with the m3 ANCHORS text, each prefixed with '[m3] ': '[m3] the demo PR on github.com/jeffersonnnn/casegate (branch demo/gate) showed, after push 1, a sticky comment starting with the marker and ✗ BLOCKED and a failing eval-gate check', and '[m3] after push 2 on the SAME PR, the SAME comment id (equal id, changed updated_at) says ✓ PASSED and the check is green (OPEN-2); the PR is closed unmerged'."
+   },
+   {
+    "kind": "gap",
+    "where": "workflows/m5-launch-assets.js TASKS.stills vs docs/DESIGN.md §3 render harness CLI (written by the M4 logo agent)",
+    "problem": "M5 stills needs the logo GIF and the banner-GIF mark frames rendered 'with sway on'. The M4 logo task needs every render without sway. DESIGN §3 fixes the render_mark.py CLI as `--size --t --palette --bg --out` plus `--frames --fps`, but no argument turns sway on or off. renderAt(t, palette, sway) takes sway, but the CLI does not expose it. The M4 agent writes the script and the M5 agent calls it, so they must agree on the flag. Without one pinned flag, M5 either cannot request sway or must edit an M4 file it may not touch.",
+    "proposed_fix": "DESIGN §3, render_mark.py args: '--size N --t SECONDS --palette dark|light --bg transparent|#RRGGBB [--sway] --out FILE; sway is off unless --sway is given (single renders and M4 renders never pass it). With --frames N --fps F, --out is a directory, frame k is renderAt(k/F, palette, sway) saved as frame_%03d.png, and --t is ignored.' Update the M5 stills task to read: logo-1000.gif = `render_mark.py --size 1000 --palette dark --bg '#0B0F0E' --frames 130 --fps 25 --sway --out <dir>`, and the banner mark frames = `--size 900 --palette dark --bg transparent --frames 130 --fps 25 --sway --out <dir>`. Quote the `#` colour in every example, because an unquoted `#0B0F0E` starts a shell comment."
+   },
+   {
+    "kind": "gap",
+    "where": "docs/DESIGN.md §7 (site/banner.html, written by the M4 banner agent) vs workflows/m5-launch-assets.js TASKS.stills (X header 4500x1500)",
+    "problem": "M5 stills must make banner-4500x1500.png/.gif from 'the dark site/banner.html layout' at viewport 1500x500, DPR 3. Text and ticks must sit in x 1500-3900, y 300-1000, and the mark must sit at x 2900-3800, y 300-1200. The M5 GIF composites the harness mark frames over 'the static frame-0 background', and 'the PNG is frame 0'. DESIGN §7 defines banner.html only as a 1280x320 page with an <img src=assets/mark-512.png> on the right. It has no X-header layout and no way to hide the <img>, so the composited mark would appear twice. The M5 stills agent may not edit M4's banner.html ('write only these files'), and no other source page is named. The two agents must agree on a query parameter or a separate page.",
+    "proposed_fix": "DESIGN §7 add: 'site/banner.html also reads ?size=x. With size=x (viewport 1500x500), the page lays out for the X header: casegate, the one-line description and the tick row sit inside CSS x 500-960, y 100-333 (device x 1500-2880, y 300-1000 at DPR 3). The mark <img> is removed (display:none), so CSS x 967-1267, y 100-400 stays empty for the composited mark. CSS x 0-500, y 333-500 stays empty for the profile photo. The M4 banner agent implements and screenshots this mode once to check it.' In the M5 stills task, the background is a screenshot of `banner.html?theme=dark&size=x` at DPR 3. banner-4500x1500.png = that background with GIF frame 0 (the 900x900 transparent harness render at t=0) composited at x 2900, y 300. The GIF composites frames 0-129 at the same place."
+   }
+  ]
+ }
+]

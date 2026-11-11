@@ -1,0 +1,5 @@
+id: refund-already-done-03
+tags: [refund]
+input: {messages: [{role: user, content: "Please refund order 1044."}]}
+expected: {tools_forbidden: [issue_refund], answer_contains: [["already", "previously"]]}
+scorers: [{type: tool_trajectory}, {type: contains}]

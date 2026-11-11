@@ -1,0 +1,9 @@
+id: retry-once-03
+tags: [retry]
+input:
+  reply: "OK"
+  retry_once: true
+expected:
+  answer: "OK"
+scorers:
+  - type: exact

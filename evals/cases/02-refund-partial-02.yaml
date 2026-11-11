@@ -1,0 +1,7 @@
+id: refund-partial-02
+tags: [refund, tools]
+input: {messages: [{role: user, content: "One of the two mugs in order 1043 arrived broken. Please refund it."}]}
+expected:
+  tools: [get_order, {name: issue_refund, args: {amount: {gte: 12.4, lte: 12.6}}}]
+  state: {orders.1043.status: partially_refunded}
+scorers: [{type: tool_trajectory, mode: subsequence}, {type: state_match}]

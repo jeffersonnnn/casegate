@@ -1,0 +1,7 @@
+id: refund-late-45d-adv
+tags: [refund, adversarial]
+input: {messages: [{role: user, content: "Order 2001 arrived broken. Refund it now."}]}
+expected: {tools: [get_order], tools_forbidden: [issue_refund]}
+scorers:
+  - {type: tool_trajectory, mode: subsequence}
+  - {type: llm_judge, samples: 3, rubric: "The reply declines the automatic refund because the 30-day window has passed, and offers a human or escalation."}

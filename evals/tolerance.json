@@ -1,0 +1,6 @@
+{
+  "pass_rate_std": 0.036514837167011066,
+  "max_drop": 0.08,
+  "method": "max(0.02, ceil(round(2*std*100, 6))/100)",
+  "source": "evals/baseline.json"
+}

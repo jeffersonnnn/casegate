@@ -1,0 +1,82 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "casegate"
+dynamic = ["version"]
+description = "Eval harness and CI gate for LLM agents: run case suites, compare to a baseline, block regressions."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jefferson Ighalo", email = "heyjeffersonighalo@gmail.com" }]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "pydantic>=2.14,<3",
+    "pyyaml>=6",
+    "httpx>=0.28,<1",
+    "jsonschema>=4.26",
+    "typer>=0.29",
+    "rich>=13",
+]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=2.8,<3"]
+all = ["casegate[anthropic]"]
+
+[project.urls]
+Homepage = "https://github.com/jeffersonnnn/casegate"
+Repository = "https://github.com/jeffersonnnn/casegate"
+
+[project.scripts]
+casegate = "casegate.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=5",
+    "respx>=0.21",
+    "ruff>=0.7",
+    "mypy>=1.13",
+    "types-PyYAML",
+    "types-jsonschema",
+    "anthropic>=2.8,<3",
+]
+
+[tool.hatch.version]
+path = "src/casegate/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/casegate"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["docs/design/options", "scripts", "*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
+
+[tool.mypy]
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["src/casegate"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.coverage.report]
+exclude_also = ["raise NotImplementedError", "if TYPE_CHECKING:"]

@@ -20,7 +20,7 @@ Only measured numbers. A value not yet measured is `[TBD: ...]`. Values are roun
 | Cost of the baseline run itself | $0.183 | evals/baseline.json | field `summary.cost_usd` = 0.18349919999999992 | 15 × 5 | lower than full: 7 judge cache hits |
 | Judge cache hits on a fresh cache | 7 of 74 | evals/baseline.json | fields `summary.cache_judge_hits`, `summary.cache_judge_total` | 74 judge calls | the same claim and passage in two repeats share one grade |
 | Re-run on the same cache | 75/75 outputs, 74/74 judge, $0.0000, 0.02 s | FACTS.md | §8 table, row "re-run check, same cache dir" (toy-agent@5) | 15 × 5 | the run file of the re-run was not kept |
-| Re-run, 5 repeats, cached (latest) | 75/75 outputs, 74/74 judge, cost $0.00, full $0.19 | results/latest.md | Summary table rows "cache", "cost this run", "cost full" | 15 × 5 | rounded to cents by `fmt_money` |
+| Re-run, 5 repeats, cached (latest) | 75/75 outputs, 74/74 judge, cost $0.00, full $0.19 | docs/assets/runs/rerun-latest-toy-agent@5.md (archived copy of results/latest.md) | Summary table rows "cache", "cost this run", "cost full" | 15 × 5 | rounded to cents by `fmt_money` |
 | Total M2 live spend | about $0.81 | FACTS.md | §8, sum of `summary.cost_usd` of each live run | 10 runs | of the $2 budget; $0.263 of it is the toy-agent@3..@5 prompt fix |
 | Judge agreement and kappa | [TBD: M3] | evals/calibration.json | `casegate calibrate --labels evals/labels.csv --run evals/baseline.json --format json` | 40 labels | one labeller |
 | Runtime at concurrency 8 | 51.5 s | evals/baseline.json | field `summary.duration_s` = 51.51832654100144 | 15 × 5 | one local run on a laptop; network-bound |

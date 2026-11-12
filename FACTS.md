@@ -106,7 +106,7 @@ Gotchas:
 | Id | Item | Resolve at |
 |---|---|---|
 | OPEN-1 | RESOLVED 2026-11-11: author `Jefferson Ighalo <heyjeffersonighalo@gmail.com>` (SPEC §1) | done |
-| OPEN-2 | A real sticky comment posted and edited by `GITHUB_TOKEN` in a real PR | M3 real-world-test |
+| OPEN-2 | RESOLVED 2026-11-12 (§9): PR #1 had one marker comment, id 6820174930, created BLOCKED at 09:43:07Z and edited in place to PASSED at 09:45:44Z | M3 real-world-test |
 | OPEN-3 | Trusted-publisher forms on PyPI and TestPyPI (human) | M3 |
 | OPEN-4 | RESOLVED 2026-11-11 (M2 live): `evals/baseline.json` (toy-agent@5, 15 cases × 5 repeats, fresh cache) has `pass_rate` 0.973 and `pass_rate_std` 0.0365; `max_drop = max(0.02, ceil(round(2*0.0365*100, 6))/100)` = 0.08, in `evals/tolerance.json` (§8). It replaces the toy-agent@2 baseline (0.867, std 0.0667, max_drop 0.14) | done |
 | OPEN-5 | 40 human labels for calibration (human) | M3 |
@@ -164,3 +164,12 @@ Real Claude API, target `claude-haiku-5-5` (effort low), judge `claude-sonnet-5-
 - `casegate gate --baseline evals/baseline.json --run evals/baseline.json` exits 0 on the toy-agent@5 baseline. With `--max-drop 0.08`, a copy with `summary.pass_rate` lowered by 1/15 (one case at 0/5) exits 0, and by 2/15 exits 1.
 - max_drop 0.08 is above 0.06 because 2 of 75 repeats still fail, and on 5 points one failing repeat moves a repeat pass rate by 0.067: per-repeat rates 1, 1, 1, 0.933, 0.933 give std 0.0365. The 3-iteration limit on prompt changes was used, so the remaining citation flakiness stays as measured signal.
 - Total M2 live spend: about $0.55 before the prompt fix, plus $0.263 for the toy-agent@3..@5 runs = about $0.81 of the $2 budget.
+
+## 9. Observed in the M3 demo PR (2026-11-12)
+
+- `workflow_dispatch` eval-gate on `main` (run 43188730751): pass_rate 0.973, n_error_repeats 0, cost_usd 0.184 (artifact `casegate-run.json`, not committed). Same suite as the baseline, so the secret works in CI.
+- The planned prompt-line regressions did NOT block at max_drop 0.08 (local runs, `--repeat 5 --no-cache`): removing the lookup rule gave 0.907 (-0.067, one case flipped); also removing the order-note rule gave 0.907 (the agent still refused the injection); removing the refund-policy rule alone gave 0.987 (the agent learns the policy from search_policy). Cost about $0.62.
+- The user chose a code regression instead: `get_order` returns money as integer cents while the agent and `issue_refund` work in dollars (`toy-agent@6-cents`). All 468 unit tests and lint passed on it. Local gate: 0.827, exit 1. PR run (43193755228): pass_rate 0.853, must_pass:adversarial failed on refund-over-cap-adv, BLOCKED (`docs/assets/demo-pr-regression/`).
+- Push 2 reverted the code (`toy-agent@7`, same code as @5). PR run 43194153125: pass_rate 0.973, PASSED. The same comment id 6820174930 was edited (`updated_at` 09:43:07Z -> 09:45:44Z); only one marker comment exists. PR #1 closed unmerged.
+- Cosmetic: with 0 flips the comment still prints an empty table header under "Flipped pass -> fail (0)"; the footer says "baseline nogit" because evals/baseline.json was made with no git sha.
+

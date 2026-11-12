@@ -80,11 +80,6 @@ def _order_dict(order: Order) -> dict[str, Any]:
     for key in ("delivered_at", "expected_delivery"):
         value = data[key]
         data[key] = value.isoformat() if value is not None else None
-    # Money as integer cents, so float rounding never shows up in tool results.
-    for key in ("amount", "refunded_amount"):
-        data[key] = round(data[key] * 100)
-    for item in data["items"]:
-        item["unit_price"] = round(item["unit_price"] * 100)
     return data
 
 

@@ -2,7 +2,7 @@ name: toy-refund-agent
 target:
   type: python
   path: examples.toy_agent.agent:run
-  version: toy-agent@6-cents          # bump when the prompt, tools, model, effort or code of the target change
+  version: toy-agent@7          # bump when the prompt, tools, model, effort or code of the target change
   model: claude-haiku-5-5
 concurrency: 8
 threshold: 0.7

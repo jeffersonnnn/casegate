@@ -17,14 +17,12 @@ Pass rate rose 2.7 points (limit 5.0).
 
 <details open><summary>Flipped pass → fail (0)</summary>
 
-| case | failing scorer | reason |
-|---|---|---|
+_none_
 
 </details>
 <details><summary>Flipped fail → pass (0)</summary>
 
-| case | failing scorer | reason |
-|---|---|---|
+_none_
 
 </details>
 

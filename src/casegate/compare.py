@@ -173,7 +173,10 @@ def flip_cells(flip: Flip, *, markdown: bool = True) -> list[str]:
 
 
 def flips_md(cmp: Comparison, keep_p2f: int | None = None, keep_f2p: int | None = None) -> str:
-    """The two flips <details> blocks; `keep_*` cut a table and end it with `… N more`."""
+    """The two flips <details> blocks; `keep_*` cut a table and end it with `… N more`.
+
+    An empty direction holds the line `_none_` in place of a header-only table (SPEC §11).
+    """
     blocks = []
     tables = [
         ("<details open>", "Flipped pass → fail", cmp.flips_pass_to_fail, keep_p2f),
@@ -184,7 +187,9 @@ def flips_md(cmp: Comparison, keep_p2f: int | None = None, keep_f2p: int | None 
         rows = [md_row(flip_cells(f)) for f in kept]
         if len(kept) < len(flips):
             rows.append(md_row([f"… {len(flips) - len(kept)} more", "", ""]))
-        table = ["| case | failing scorer | reason |", "|---|---|---|", *rows]
+        table = (
+            ["| case | failing scorer | reason |", "|---|---|---|", *rows] if flips else ["_none_"]
+        )
         summary = f"{tag}<summary>{title} ({len(flips)})</summary>"
         blocks.append("\n".join([summary, "", *table, "", "</details>"]))
     return "\n".join(blocks)

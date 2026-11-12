@@ -150,7 +150,7 @@ def render_gate_comment(
     verdict = "✓ casegate gate: PASSED" if result.passed else "✗ casegate gate: BLOCKED"
     rows = metric_rows(cmp, baseline, run, must_pass_rows(baseline, run, must_pass_tags))
     checks = " · ".join(f"{check_glyph(c)} {c.detail}" for c in result.checks)
-    sha = [x.git_sha[:7] if x.git_sha else "nogit" for x in (baseline, run)]
+    sha = [x.git_sha[:7] if x.git_sha else x.target_version for x in (baseline, run)]
     footer = (
         f"<sub>baseline {sha[0]} · run {sha[1]} · casegate {run.casegate_version}"
         f" · max-drop {max_drop:.2f} · baseline std {baseline.summary.pass_rate_std:.3f}</sub>"

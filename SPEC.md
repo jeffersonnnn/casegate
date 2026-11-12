@@ -865,7 +865,7 @@ class Comparison(BaseModel):
 - Flips table cells (comment, compare md, consoles): case = id; failing scorer = `Flip.scorer` or `—`; reason = `md_cell(Flip.reason, 120)` or `—`. Fail → pass rows show `—` in both cells.
 - Warnings (they never fail anything): `target version changed: <a> → <b>`, `judge model changed: <a> → <b>`, `repeat changed: <a> → <b>`.
 
-`render_comparison_md(cmp, baseline, run) -> str` = the metric table without must-pass rows + the two flips `<details>` blocks (§11 format) + the list lines. After the flips blocks it writes one line per non-empty list, in this order, each followed by a blank line: `**Errors** ⚠ <ids joined by ", ">` (`changed_to_error`), `**Recovered from error** <ids>` (`changed_from_error`), `**Added** <ids>`, `**Removed** <ids>`.
+`render_comparison_md(cmp, baseline, run) -> str` = the metric table without must-pass rows + the two flips `<details>` blocks (§11 format; an empty block holds `_none_`, not a header-only table) + the list lines. After the flips blocks it writes one line per non-empty list, in this order, each followed by a blank line: `**Errors** ⚠ <ids joined by ", ">` (`changed_to_error`), `**Recovered from error** <ids>` (`changed_from_error`), `**Added** <ids>`, `**Removed** <ids>`.
 
 `casegate compare <baseline> <run> [--format text|md|json]`: text = rich tables (§14); md = `render_comparison_md`; json = `cmp.model_dump_json(indent=2)`. Exit 0 always (input errors 2).
 
@@ -941,18 +941,18 @@ Pass rate fell 10.6 points (limit 5.0).
 </details>
 <details><summary>Flipped fail → pass (0)</summary>
 
-| case | failing scorer | reason |
-|---|---|---|
+_none_
 
 </details>
 
-<sub>baseline <sha7|nogit> · run <sha7|nogit> · casegate <run.casegate_version> · max-drop <max_drop:.2f> · baseline std <baseline.summary.pass_rate_std:.3f></sub>
+<sub>baseline <sha7|target_version> · run <sha7|target_version> · casegate <run.casegate_version> · max-drop <max_drop:.2f> · baseline std <baseline.summary.pass_rate_std:.3f></sub>
 ```
 
 - The first line is always the marker. One `> [!WARNING]` block per comparison warning, after the headline sentence (omitted when there are none).
 - One `must-pass (<tag>)` row per must-pass tag, after the `std across repeats` row: cases with that tag whose every repeat passed / cases with that tag; delta as an integer delta.
 - A blank line follows every `</summary>` and precedes every `</details>` and the `<sub>` footer (GitHub renders Markdown inside `<details>` only after a blank line).
-- The footer states only facts the gate knows: it does not say where `max-drop` came from.
+- A flips block with no flips holds the single line `_none_` in place of the table (no header-only table); this applies to `render_comparison_md` (§10) too.
+- The footer states only facts the gate knows: it does not say where `max-drop` came from. Each side shows `git_sha[:7]`, or that run's `target_version` when `git_sha` is None (for example `baseline toy-agent@5`).
 - `render_gate_comment` = marker + headline + warnings + the `render_comparison_md` table with the must-pass rows put in + Checks line + the same flips blocks + the §10 list lines (Errors, Recovered from error, Added, Removed) + footer.
 - Max body size 60,000 characters. If longer, drop rows from the end of the `fail → pass` table first, then from `pass → fail`, one row at a time, until it fits, and end each cut table with a row `| … N more | | |`. The marker, headline, metric table, Checks line, list lines and footer are never cut. `N` in each `<summary>` is always the full count before truncation.
 - The headline `pts` follows the §9 zero rule.

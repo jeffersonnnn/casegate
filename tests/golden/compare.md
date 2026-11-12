@@ -16,7 +16,6 @@
 </details>
 <details><summary>Flipped fail → pass (0)</summary>
 
-| case | failing scorer | reason |
-|---|---|---|
+_none_
 
 </details>

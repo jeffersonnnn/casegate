@@ -195,3 +195,9 @@ def test_max_drop_fails_closed_on_nan_pass_rate() -> None:
     )
     check = next(c for c in gate(base, bad, **ARGS).checks if c.name == "max_drop")
     assert not check.passed
+
+
+def test_footer_falls_back_to_target_version_without_git_sha() -> None:
+    base = load("baseline").model_copy(update={"git_sha": None})
+    body = comment(base, load("fixed"))
+    assert "<sub>baseline toy-agent@1 · run ccccccc · " in body and "nogit" not in body

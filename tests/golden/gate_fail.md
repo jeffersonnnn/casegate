@@ -26,8 +26,7 @@ Pass rate fell 13.3 points (limit 5.0).
 </details>
 <details><summary>Flipped fail → pass (0)</summary>
 
-| case | failing scorer | reason |
-|---|---|---|
+_none_
 
 </details>
 

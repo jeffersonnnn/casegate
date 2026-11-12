@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>casegate banner</title>
+<!--
+  README banner source (docs/DESIGN.md §7). Screenshot with Playwright at deviceScaleFactor 2:
+    banner.html?theme=dark  (viewport 1280x320) -> docs/assets/banner-dark.png  (2560x640)
+    banner.html?theme=light (viewport 1280x320) -> docs/assets/banner-light.png (2560x640)
+  X header mode for M5: banner.html?theme=dark&size=x at viewport 1500x500, deviceScaleFactor 3.
+  Tick heights and flips are copied from index.html (computed by the command in its hero comment).
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), d = document.documentElement;
+  if (q.get('theme') === 'light') {
+    d.classList.add('light');
+    var light = {
+      '--bg': '#F4F7F5', '--surface': '#E9EEEB', '--text': '#0B0F0E', '--muted': '#5E6E67',
+      '--pass': '#1A8F4E', '--fail': '#C8312F', '--line': 'rgba(11,15,14,0.12)'
+    };
+    for (var k in light) d.style.setProperty(k, light[k]);
+    d.style.colorScheme = 'light';
+  }
+  if (q.get('size') === 'x') d.classList.add('size-x');
+})();
+</script>
+<style>
+  html, body { width: 1280px; height: 320px; overflow: hidden; }
+  .banner {
+    position: relative; width: 1280px; height: 320px; overflow: hidden;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+  }
+  .copy { position: absolute; left: 80px; top: 44px; width: 600px; }
+  .eyebrow { margin: 0 0 14px; }
+  .name {
+    margin: 0; font: 500 68px/1 var(--mono); letter-spacing: -0.02em; color: var(--text);
+  }
+  .desc { margin: 14px 0 0; font: 400 19px/1.4 var(--body); color: var(--text); text-wrap: balance; }
+  .row { position: absolute; left: 80px; bottom: 40px; display: flex; align-items: flex-end; gap: 18px; }
+  .row .ticks { margin: 0; }
+  .ticks i { animation: none; }
+  .light .ticks i:not(.f):not(.warn) { opacity: 1; }
+  .row .ticks-note { margin: 0 0 -2px; }
+  .mark {
+    position: absolute; width: 336px; height: 336px; right: 96px; top: -26px;
+  }
+  .xh { position: absolute; width: 11px; height: 11px; }
+  .xh::before, .xh::after { content: ""; position: absolute; background: var(--muted); opacity: 0.7; }
+  .xh::before { left: 5px; top: 0; width: 1px; height: 11px; }
+  .xh::after { top: 5px; left: 0; height: 1px; width: 11px; }
+  .xh.a { left: 34px; top: 34px; } .xh.b { right: 34px; top: 34px; }
+  .xh.c { left: 34px; bottom: 34px; } .xh.d { right: 34px; bottom: 34px; }
+  .tele {
+    position: absolute; right: 56px; bottom: 40px; text-align: right;
+    font: 500 11px/1.5 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* X header (DESIGN §7): text and ticks inside CSS x 500-960, y 100-333; no mark;
+     x 967-1267 y 100-400 (composited mark) and x 0-500 y 333-500 (profile photo) stay empty. */
+  .size-x, .size-x body, .size-x .banner { width: 1500px; height: 500px; }
+  .size-x .copy { left: 500px; top: 100px; width: 460px; }
+  .size-x .eyebrow { margin-bottom: 12px; }
+  .size-x .name { font-size: 60px; }
+  .size-x .desc { margin-top: 12px; font-size: 17px; line-height: 1.4; }
+  .size-x .row { left: 500px; top: 289px; bottom: auto; }
+  .size-x .ticks-note, .size-x .mark, .size-x .tele, .size-x .xh { display: none; }
+</style>
+</head>
+<body>
+<main class="banner">
+ <i class="xh a"></i><i class="xh b"></i><i class="xh c"></i><i class="xh d"></i>
+ <div class="copy">
+  <p class="eyebrow">Evals · CI gate · Python</p>
+  <h1 class="name">casegate</h1>
+  <p class="desc">Runs labelled cases against any LLM system and blocks the pull request that makes it worse.</p>
+ </div>
+ <div class="row">
+  <div class="ticks" aria-hidden="true">
+   <i class="f" style="height:44px;--i:0"></i>
+   <i class="f" style="height:44px;--i:1"></i>
+   <i style="height:44px;--i:2"></i>
+   <i style="height:44px;--i:3"></i>
+   <i style="height:44px;--i:4"></i>
+   <i style="height:44px;--i:5"></i>
+   <i style="height:44px;--i:6"></i>
+   <i style="height:44px;--i:7"></i>
+   <i style="height:44px;--i:8"></i>
+   <i style="height:43px;--i:9"></i>
+   <i style="height:44px;--i:10"></i>
+   <i style="height:44px;--i:11"></i>
+   <i style="height:42px;--i:12"></i>
+   <i style="height:44px;--i:13"></i>
+   <i style="height:44px;--i:14"></i>
+  </div>
+  <p class="ticks-note">15 cases · <span class="x">✗ 2 flipped</span> in the demo pull request</p>
+ </div>
+ <img class="mark" id="mark" src="assets/mark-512.png" alt="casegate logo: a barrier arm lifted into a check mark" width="512" height="512">
+ <div class="tele">pass 0.973 ± 0.037<br>tolerance 0.08</div>
+</main>
+<script>
+if (document.documentElement.classList.contains('light')) {
+  document.getElementById('mark').src = 'assets/mark-512-light.png';
+}
+</script>
+</body>
+</html>

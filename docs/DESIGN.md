@@ -107,6 +107,17 @@ X header mode (M5 uses it): `site/banner.html` also reads `?size=x`. With `size=
 
 Light variant: bg `#F4F7F5`, text `#0B0F0E`, post/hub material `#0B0F0E`, arm `#1A8F4E`, grey ticks `#5E6E67`, fail ticks `#C8312F`, hairlines `rgba(11,15,14,0.12)`. The M4 banner task writes `scripts/contrast.py` (WCAG 2.x relative luminance) and records each ratio here (text pairs ≥ 4.5:1). Used via `<picture>` with `prefers-color-scheme`.
 
+Light ratios on bg `#F4F7F5` (`python3 scripts/contrast.py`, M4 2026-11-12; the script also re-checks every §1 pair and exits 1 if a pair is under its minimum):
+
+| Pair | Ratio | Minimum |
+|---|---:|---:|
+| text `#0B0F0E` | 17.88:1 | 4.5 |
+| grey ticks and muted labels `#5E6E67` | 4.99:1 | 4.5 |
+| fail ticks and the `✗ 2 flipped` label `#C8312F` | 4.95:1 | 4.5 |
+| post/hub material `#0B0F0E` | 17.88:1 | 3.0 (graphic) |
+| arm `#1A8F4E` (graphic only, never text) | 3.83:1 | 3.0 (graphic) |
+| hairlines `rgba(11,15,14,0.12)` | decorative | — |
+
 ## 8. Site (`site/`, GitHub Pages, M4)
 
 One page, built from `docs/design/options/option-a.html` with real content:

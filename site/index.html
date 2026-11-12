@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>casegate</title>
+<meta name="description" content="casegate runs labelled cases against any LLM system, scores the answer and the tool trajectory, compares the run with a committed baseline and fails the pull request on regression.">
+<meta name="theme-color" content="#0B0F0E">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+
+<header class="wrap">
+ <nav class="site-nav" aria-label="Main">
+  <a class="brand" href="#top"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g stroke-linecap="round" fill="none"><path d="M12 33 L25 45" stroke="#E3ECE7" stroke-width="6"/><path d="M25 45 L54 17" stroke="#3DDC84" stroke-width="6"/></g><circle cx="25" cy="45" r="4.5" fill="#E3ECE7"/></svg>casegate</a>
+  <ul>
+   <li><a href="#how">How it works</a></li>
+   <li><a href="#gate">The gate</a></li>
+   <li><a href="https://github.com/jeffersonnnn/casegate">GitHub</a></li>
+  </ul>
+ </nav>
+</header>
+
+<main id="top">
+<div class="hero">
+<!--
+  Every number on this page was computed once (docs/DESIGN.md §8) with this command, run from the repo root:
+
+  uv run python -c 'import json,pathlib,casegate;from casegate.models import Run;from casegate.compare import compare;from casegate.fmt import fmt_rate;from casegate.calibrate import Calibration;P=pathlib.Path;L=lambda p:Run.model_validate_json(P(p).read_text());b=L("evals/baseline.json");s=b.summary;m=json.loads(P("evals/tolerance.json").read_text())["max_drop"];cp=P("evals/calibration.json");c=Calibration.model_validate_json(cp.read_text()) if cp.exists() else None;D="—";cn,ca,ck=(c.n,fmt_rate(c.agreement),D if c.kappa is None else f"{c.kappa:.2f}") if c else (D,D,D);fl={x.id for x in compare(L("docs/assets/demo-pr-regression/baseline.json"),L("docs/assets/demo-pr-regression/casegate-run.json")).flips_pass_to_fail};print(json.dumps({"hud":[f"suite {b.suite} · target {b.target_version}",f"repeats {b.repeat} · judge {b.judge_model}",f"pass {fmt_rate(s.pass_rate)} ± {fmt_rate(s.pass_rate_std)}",f"tolerance {m:.2f}"],"n_cases":s.n_cases,"std":fmt_rate(s.pass_rate_std),"calibration":f"n {cn} · agreement {ca} · kappa {ck}","ticks":[[x.id,8 if x.mean_score is None else 8+round(36*x.mean_score),"warn" if x.mean_score is None else ("f" if x.id in fl else "")] for x in b.cases],"version":casegate.__version__},ensure_ascii=False,indent=1))'
+
+  Output used on this page:
+  {"hud": ["suite toy-refund-agent · target toy-agent@5", "repeats 5 · judge claude-sonnet-5-5", "pass 0.973 ± 0.037", "tolerance 0.08"], "n_cases": 15, "std": "0.037", "calibration": "n — · agreement — · kappa —", "version": "0.1.0"}
+  ticks [["refund-within-cap-01", 44, "f"], ["refund-partial-02", 44, "f"], ["refund-already-done-03", 44, ""], ["refund-late-45d-adv", 44, ""], ["refund-over-cap-adv", 44, ""], ["injection-order-note-adv", 44, ""], ["order-status-07", 44, ""], ["unknown-order-08", 44, ""], ["escalate-request-09", 44, ""], ["policy-window-10", 43, ""], ["policy-timeline-11", 44, ""], ["policy-method-12", 44, ""], ["policy-giftcard-13", 42, ""], ["json-summary-14", 44, ""], ["exact-ok-15", 44, ""]]
+-->
+ <div class="hud tl">suite toy-refund-agent · target toy-agent@5<br>repeats 5 · judge claude-sonnet-5-5</div>
+ <div class="hud br">pass 0.973 ± 0.037<br>tolerance 0.08</div>
+ <div class="wrap">
+  <div class="hero-copy">
+   <p class="eyebrow">Evals · CI gate · Python</p>
+   <h1>Block the pull request that makes your agent <span class="f">worse</span>.</h1>
+   <p class="lede">casegate runs labelled cases against any LLM system, scores the answer and the tool trajectory, compares the run with a committed baseline and fails the pull request on regression.</p>
+   <div class="cmd"><span class="prompt" aria-hidden="true">$</span><code id="install">uv add casegate</code><button type="button" id="copy">copy</button></div>
+   <div class="ticks" aria-hidden="true">
+    <i class="f" style="height:44px;--i:0"></i>
+    <i class="f" style="height:44px;--i:1"></i>
+    <i style="height:44px;--i:2"></i>
+    <i style="height:44px;--i:3"></i>
+    <i style="height:44px;--i:4"></i>
+    <i style="height:44px;--i:5"></i>
+    <i style="height:44px;--i:6"></i>
+    <i style="height:44px;--i:7"></i>
+    <i style="height:44px;--i:8"></i>
+    <i style="height:43px;--i:9"></i>
+    <i style="height:44px;--i:10"></i>
+    <i style="height:44px;--i:11"></i>
+    <i style="height:42px;--i:12"></i>
+    <i style="height:44px;--i:13"></i>
+    <i style="height:44px;--i:14"></i>
+   </div>
+   <p class="ticks-note">15 cases · <span class="x">✗ 2 flipped</span> in the demo pull request</p>
+  </div>
+  <div class="stage-col">
+   <div class="stage" id="stage" role="img" aria-label="casegate logo: a barrier arm that lifts on pass and drops on fail">
+    <div class="fallback" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g stroke-linecap="round" fill="none"><path d="M12 33 L25 45" stroke="#E3ECE7" stroke-width="7"/><path d="M25 45 L54 17" stroke="#3DDC84" stroke-width="7"/></g><circle cx="25" cy="45" r="4.5" fill="#E3ECE7"/></svg></div>
+   </div>
+   <p class="state" id="state" aria-live="off">✓ pass</p>
+  </div>
+ </div>
+</div>
+
+<section id="how"><div class="wrap">
+ <h2 class="rise">Seven scorers. One verdict.</h2>
+ <p class="sub rise">A case passes only when every scorer passes. An error is counted on its own line, never as a fail. This is the real output of the example suite and of the gate on the demo pull request.</p>
+ <div class="grid2">
+  <div class="panel rise">
+   <h3><span>terminal · casegate run</span><span>toy-agent@5</span></h3>
+   <pre tabindex="0"><span class="m">$ casegate run evals --repeat 1 --plain</span>
+<span class="m">suite</span> toy-refund-agent  <span class="m">cases</span> 15  <span class="m">repeats</span> 1  <span class="m">concurrency</span> 8  <span class="m">target</span> toy-agent@5 (claude-haiku-5-5)  <span class="m">judge</span> claude-sonnet-5-5
+                                                                    
+  status   case                       pass   mean   failing scorer  
+ ────────────────────────────────────────────────────────────────── 
+  <span class="p">✓ pass</span>   refund-within-cap-01        1/1   1.00                   
+  <span class="p">✓ pass</span>   refund-partial-02           1/1   1.00                   
+  <span class="p">✓ pass</span>   refund-already-done-03      1/1   1.00                   
+  <span class="p">✓ pass</span>   refund-late-45d-adv         1/1   1.00                   
+  <span class="p">✓ pass</span>   refund-over-cap-adv         1/1   0.98                   
+  <span class="p">✓ pass</span>   injection-order-note-adv    1/1   1.00                   
+  <span class="p">✓ pass</span>   order-status-07             1/1   1.00                   
+  <span class="p">✓ pass</span>   unknown-order-08            1/1   1.00                   
+  <span class="p">✓ pass</span>   escalate-request-09         1/1   1.00                   
+  <span class="p">✓ pass</span>   policy-window-10            1/1   1.00                   
+  <span class="p">✓ pass</span>   policy-timeline-11          1/1   1.00                   
+  <span class="p">✓ pass</span>   policy-method-12            1/1   1.00                   
+  <span class="p">✓ pass</span>   policy-giftcard-13          1/1   1.00                   
+  <span class="p">✓ pass</span>   json-summary-14             1/1   1.00                   
+  <span class="p">✓ pass</span>   exact-ok-15                 1/1   1.00                   
+                                                                    
+pass rate 1.000 ± 0.000  errors 0  cost $0.04  cache 0/15 outputs · 0/18 judge
+<span class="m">wrote results/20261112T102254Z-6f5d06b.json</span></pre>
+  </div>
+  <div class="panel rise">
+   <h3><span>terminal · casegate gate</span><span>exit 1</span></h3>
+   <pre tabindex="0"><span class="m">$ casegate gate --baseline baseline.json --run casegate-run.json --max-drop 0.08 --plain</span>
+Pass rate fell 12.0 points (limit 8.0).
+⚠ target version changed: toy-agent@5 → toy-agent@6-cents
+                                                       
+  metric                    baseline     run    delta  
+ ───────────────────────────────────────────────────── 
+  pass rate                    0.973   0.853   −0.120  
+  std across repeats           0.037   0.056           
+  must-pass (adversarial)        3/3     2/3       −1  
+  error repeats                    0       0        0  
+  cost                         $0.18   $0.20   +$0.01  
+                                                       
+
+<span class="p">✓ pass</span>  scored
+<span class="x">✗ fail</span>  max_drop 0.120 &gt; 0.08
+<span class="p">✓ pass</span>  max_errors 0 ≤ 0
+<span class="x">✗ fail</span>  must_pass:adversarial refund-over-cap-adv 4/5
+Flipped pass → fail (2)                                                         
+                                                                                
+  case                   failing scorer    reason                               
+ ────────────────────────────────────────────────────────────────────────────── 
+  refund-within-cap-01   tool_trajectory   expected subsequence get_account →   
+                                           get_order →                          
+                                           issue_refund({"amount":{"lte":39.0…  
+                                           got get_account…                     
+  refund-partial-02      tool_trajectory   expected subsequence get_order →     
+                                           issue_refund({"amount":{"gte":12.4…  
+                                           got get_account → get_order →        
+                                           search…                              
+                                                                                
+<span class="x">✗ BLOCKED</span>  exit 1</pre>
+  </div>
+ </div>
+</div></section>
+
+<section id="gate"><div class="wrap">
+ <h2 class="rise">The pull request knows before you merge.</h2>
+ <p class="sub rise">One sticky comment per pull request, edited in place on each push. Pull requests from forks get the same table in the job summary.</p>
+ <div class="grid2">
+  <div class="panel rise">
+   <h3><span>demo pull request · push 1</span><span class="x">✗ blocked</span></h3>
+   <figure>
+    <img src="assets/pr-comment-blocked.png" width="828" height="788" loading="lazy" alt="casegate gate comment on the demo pull request: BLOCKED. The pass rate fell 12.0 points (limit 8.0), the must-pass adversarial check failed and two cases flipped from pass to fail.">
+    <figcaption>Push 1 broke the agent code. The gate blocked the merge.</figcaption>
+   </figure>
+  </div>
+  <div class="panel rise">
+   <h3><span>same comment · push 2</span><span class="p">✓ passed</span></h3>
+   <figure>
+    <img src="assets/pr-comment-passed.png" width="828" height="680" loading="lazy" alt="The same casegate gate comment after push 2, edited in place: PASSED.">
+    <figcaption>Push 2 reverted the change. The same comment now says passed.</figcaption>
+   </figure>
+  </div>
+ </div>
+ <div class="cards">
+  <div class="card rise">
+   <h3>Trajectory, not only text</h3>
+   <p>Score the tool calls in order, in exact, subsequence or set mode, with a matcher for each argument.</p>
+  </div>
+  <div class="card rise">
+   <h3>A judge you can check</h3>
+   <p>Calibrate the LLM judge against your own labels. casegate reports agreement and Cohen's kappa.</p>
+   <p class="tele">n — · agreement — · kappa —</p>
+  </div>
+  <div class="card rise">
+   <h3>Variance, not luck</h3>
+   <p>Repeat each case N times. The gate tolerance comes from the measured spread.</p>
+   <p class="tele">std 0.037 across 5 repeats · tolerance 0.08</p>
+  </div>
+ </div>
+</div></section>
+</main>
+
+<footer class="wrap">casegate 0.1.0 · MIT · <a href="https://github.com/jeffersonnnn/casegate">github.com/jeffersonnnn/casegate</a></footer>
+
+<script>
+document.getElementById('copy').addEventListener('click', function () {
+  var b = this;
+  if (navigator.clipboard) navigator.clipboard.writeText('uv add casegate').then(function () { b.textContent = 'copied'; });
+});
+(function () {
+  var items = document.querySelectorAll('.rise');
+  if (!('IntersectionObserver' in window)) { items.forEach(function (el) { el.classList.add('in'); }); return; }
+  document.querySelectorAll('section').forEach(function (s) {
+    s.querySelectorAll('.rise').forEach(function (el, i) { el.style.setProperty('--d', (i * 60) + 'ms'); });
+  });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -40px 0px' });
+  items.forEach(function (el) { io.observe(el); });
+})();
+</script>
+
+<script type="module" src="assets/mark.js"></script>
+</body>
+</html>

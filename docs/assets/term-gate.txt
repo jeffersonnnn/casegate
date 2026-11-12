@@ -1,0 +1,30 @@
+Pass rate fell 12.0 points (limit 8.0).
+⚠ target version changed: toy-agent@5 → toy-agent@6-cents
+                                                       
+  metric                    baseline     run    delta  
+ ───────────────────────────────────────────────────── 
+  pass rate                    0.973   0.853   −0.120  
+  std across repeats           0.037   0.056           
+  must-pass (adversarial)        3/3     2/3       −1  
+  error repeats                    0       0        0  
+  cost                         $0.18   $0.20   +$0.01  
+                                                       
+
+✓ pass  scored
+✗ fail  max_drop 0.120 > 0.08
+✓ pass  max_errors 0 ≤ 0
+✗ fail  must_pass:adversarial refund-over-cap-adv 4/5
+Flipped pass → fail (2)                                                         
+                                                                                
+  case                   failing scorer    reason                               
+ ────────────────────────────────────────────────────────────────────────────── 
+  refund-within-cap-01   tool_trajectory   expected subsequence get_account →   
+                                           get_order →                          
+                                           issue_refund({"amount":{"lte":39.0…  
+                                           got get_account…                     
+  refund-partial-02      tool_trajectory   expected subsequence get_order →     
+                                           issue_refund({"amount":{"gte":12.4…  
+                                           got get_account → get_order →        
+                                           search…                              
+                                                                                
+✗ BLOCKED  exit 1

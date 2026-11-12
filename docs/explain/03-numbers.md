@@ -26,6 +26,11 @@ Only measured numbers. A value not yet measured is `[TBD: ...]`. Values are roun
 | Runtime at concurrency 8 | 51.5 s | evals/baseline.json | field `summary.duration_s` = 51.51832654100144 | 15 × 5 | one local run on a laptop; network-bound |
 | One-repeat re-run on a warm cache (M3 real-world-test) | pass rate 0.933, 15/15 outputs and 16/16 judge cached, cost $0.00 this run, $0.04 full | docs/assets/runs/rerun-repeat1-m3-toy-agent@5.md (archived copy of results/latest.md) | header line "pass rate 0.933", Summary rows "cache", "cost this run", "cost full"; `casegate run evals --repeat 1` twice with the same `CASEGATE_CACHE_DIR` | 15 × 1 | one repeat: one flip moves the rate 0.067; the run file of the cold first run was not kept |
 | Size of the library | 3,974 lines in 31 files | src/casegate | `python -c "import glob; fs=glob.glob('src/casegate/**/*.py', recursive=True); print(len(fs), sum(len(open(f).read().splitlines()) for f in fs))"` after M3 | all of `src/casegate/` | counts blank lines, docstrings and comments; the toy agent in `examples/` is not counted; no measured comparison with promptfoo or deepeval |
+| Terminal recording for the site (M4) | pass rate 1.000, 0 errors, cost $0.043, cache 0/15 outputs and 0/18 judge, 14.5 s | docs/assets/runs/term-run-toy-agent@5.json (archived copy of results/20261112T102254Z-6f5d06b.json) | `casegate run evals --repeat 1 --plain` with `.env` loaded, M4 site task; fields `summary.pass_rate` = 1.0, `summary.n_error_repeats`, `summary.cost_usd` = 0.0430238, `summary.cache_output_hits`/`cache_output_total`, `summary.cache_judge_hits`/`cache_judge_total`, `summary.duration_s` = 14.494952916997136 | 15 × 1 | one repeat on a cold cache; shown in `docs/assets/term-run.txt` |
+| Demo PR gate, push 1 (shown in `term-gate.txt` and on the site) | pass rate 0.973 to 0.853 (drop 0.120, limit 0.08), std 0.056, 0 error repeats, cost $0.196 | docs/assets/demo-pr-regression/casegate-run.json | fields `summary.pass_rate` = 0.8533333333333334, `summary.pass_rate_std` = 0.05577733510227169, `summary.n_error_repeats`, `summary.cost_usd` = 0.19617489999999999; baseline `summary.pass_rate` = 0.9733333333333333 from `docs/assets/demo-pr-regression/baseline.json` | 15 × 5 | `toy-agent@6-cents`, a code regression on purpose; 2 flips and `refund-over-cap-adv` 4/5 come from `casegate gate` on this pair |
+| Site accessibility, Lighthouse 12.8.2 (M4) | 100 on mobile and on desktop | docs/assets/runs/lighthouse-local-mobile-m4.json | field `categories.accessibility.score` = 1 in the mobile file and in `docs/assets/runs/lighthouse-local-desktop-m4.json`; `--only-categories=accessibility` against `http://127.0.0.1:8765/` | 1 page, 2 form factors | a local server, not the deployed URL: Pages is not on yet (M4 human step) |
+| Light banner contrast on `#F4F7F5` | text 17.88:1, grey 4.99:1, fail 4.95:1, arm 3.83:1 (graphic) | scripts/contrast.py | `python3 scripts/contrast.py` (exit 0), rows "light §7"; the same values are in `docs/DESIGN.md` §7 | 5 light pairs | computed, not measured on a screen; the grey holds only at opacity 1 |
+| Dark palette contrast (lowest pairs) | fail on surface 5.86:1, muted on surface 6.61:1; text on bg 16.00:1 | scripts/contrast.py | `python3 scripts/contrast.py`, rows "dark §1" | 10 dark pairs | every dark text pair is at least 4.5:1 |
 
 ## Reproduce
 
@@ -34,6 +39,14 @@ set -a; . ./.env; set +a
 CASEGATE_CACHE_DIR=$(mktemp -d) casegate run evals --repeat 5 --out /tmp/cg-baseline.json   # about $0.19
 casegate report /tmp/cg-baseline.json --format json   # the summary fields above
 casegate gate --baseline evals/baseline.json --run evals/baseline.json; echo $?   # 0
+```
+
+M4 checks:
+
+```bash
+python3 scripts/contrast.py; echo $?   # the contrast rows, 0
+uv run casegate gate --baseline docs/assets/demo-pr-regression/baseline.json --run docs/assets/demo-pr-regression/casegate-run.json --max-drop 0.08 --plain; echo $?   # 1, term-gate.txt
+npx lighthouse@12 <url> --only-categories=accessibility --output=json --chrome-flags="--headless=new"   # docs/DESIGN.md §8
 ```
 
 A new run gives new values, because the target and the judge are not deterministic. The numbers above are from the committed `evals/baseline.json`.

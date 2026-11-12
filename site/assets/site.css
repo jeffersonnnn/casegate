@@ -1,0 +1,214 @@
+/* casegate site: design direction A, "Lab instrument" (docs/DESIGN.md, ADR 0007). */
+:root {
+  --bg: #0B0F0E;
+  --surface: #141A18;
+  --text: #E3ECE7;
+  --muted: #8FA39A;
+  --pass: #3DDC84;
+  --fail: #FF5D5D;
+  --warn: #E8C547;
+  --line: rgba(227, 236, 231, 0.12);
+  --display: 'IBM Plex Sans Condensed', system-ui, sans-serif;
+  --body: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--pass); }
+a:focus-visible, button:focus-visible, pre:focus-visible {
+  outline: 2px solid var(--pass);
+  outline-offset: 3px;
+}
+img { display: block; max-width: 100%; height: auto; }
+
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.site-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex; align-items: center; gap: 10px; min-height: 44px;
+  font: 500 18px/1 var(--mono); color: var(--text); text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.brand:hover { color: var(--text); }
+.brand svg { width: 28px; height: 28px; }
+.site-nav ul {
+  display: flex; gap: 22px; list-style: none; margin: 0; padding: 0;
+  font: 500 13px/16px var(--mono);
+}
+.site-nav ul a {
+  display: inline-block; padding: 14px 0;
+  color: var(--muted); text-decoration: none;
+}
+.site-nav ul a:hover { color: var(--text); }
+
+.hero {
+  position: relative; overflow: hidden; border-bottom: 1px solid var(--line);
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: -1px -1px;
+}
+.hero .wrap {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 32px; align-items: center;
+  min-height: 540px; padding-top: 56px; padding-bottom: 56px;
+}
+.hero-copy { min-width: 0; }
+.eyebrow {
+  margin: 0 0 20px;
+  font: 500 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  margin: 0 0 22px;
+  font-family: var(--display); font-weight: 700; letter-spacing: -0.01em;
+  font-size: clamp(40px, 6.2vw, 76px); line-height: 1.02;
+}
+h1 .f { color: var(--fail); }
+.lede { margin: 0 0 30px; max-width: 34em; font-size: 19px; color: var(--muted); }
+
+.cmd {
+  display: inline-flex; align-items: center; gap: 14px; max-width: 100%;
+  padding: 6px 8px 6px 16px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  font: 500 15px/1 var(--mono);
+}
+.cmd code { font: inherit; color: var(--text); white-space: nowrap; }
+.cmd .prompt { color: var(--muted); }
+.cmd button {
+  min-height: 44px; padding: 10px;
+  background: none; border: 0; border-radius: 4px; cursor: pointer;
+  font: 500 12px/1 var(--mono); color: var(--pass);
+}
+
+/* Tick row: one tick per case of evals/baseline.json (DESIGN §8). */
+.ticks { display: flex; gap: 6px; align-items: flex-end; height: 44px; margin-top: 28px; }
+.ticks i {
+  display: block; width: 6px; border-radius: 1px;
+  background: var(--muted); opacity: 0.45;
+  transform-origin: bottom;
+  animation: tick-grow 300ms ease-out both;
+  animation-delay: calc(var(--i) * 43ms);
+}
+.ticks i.f {
+  background: var(--fail); opacity: 1;
+  animation: tick-grow 300ms ease-out both, tick-flip 200ms ease-out both;
+  animation-delay: calc(var(--i) * 43ms), 900ms;
+}
+.ticks i.warn { background: var(--warn); opacity: 1; }
+@keyframes tick-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes tick-flip {
+  from { background: var(--muted); opacity: 0.45; }
+  to { background: var(--fail); opacity: 1; }
+}
+.ticks-note {
+  margin: 10px 0 0;
+  font: 500 11px/1.4 var(--mono); letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--muted);
+}
+.ticks-note .x { color: var(--fail); }
+
+.hud {
+  position: absolute; z-index: 2; right: 20px; text-align: right;
+  font: 500 11px/1.4 var(--mono); letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--muted);
+}
+.hud.tl { top: 18px; }
+.hud.br { bottom: 18px; }
+
+/* The SVG fallback shows until mark.js adds .gl, so the logo is there without JS or WebGL. */
+.stage-col { position: relative; justify-self: center; width: 100%; max-width: 440px; }
+.stage { position: relative; width: 100%; aspect-ratio: 1 / 1; }
+.stage canvas { display: block; width: 100% !important; height: 100% !important; }
+.stage .fallback { position: absolute; inset: 0; display: grid; place-items: center; }
+.stage .fallback svg { width: 62%; height: auto; }
+.stage.gl .fallback { display: none; }
+.state {
+  position: absolute; left: 0; right: 0; bottom: 6px; margin: 0;
+  text-align: center; font: 500 13px/1 var(--mono); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--pass);
+}
+.state.x { color: var(--fail); }
+
+section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+h2 {
+  margin: 0 0 12px;
+  font-family: var(--display); font-weight: 700; letter-spacing: -0.01em;
+  font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1;
+}
+.sub { margin: 0 0 32px; max-width: 40em; color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.grid2 > * { min-width: 0; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.panel h3 {
+  display: flex; justify-content: space-between; gap: 12px; margin: 0; padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font: 500 12px/1.2 var(--mono); letter-spacing: 0.06em; color: var(--muted);
+}
+pre {
+  margin: 0; padding: 18px 16px; overflow-x: auto; white-space: pre;
+  font: 400 13px/1.65 var(--mono); color: var(--text);
+}
+.p { color: var(--pass); }
+.x { color: var(--fail); }
+.w { color: var(--warn); }
+.m { color: var(--muted); }
+.panel figure { margin: 0; }
+.panel figure img { width: 100%; }
+.panel figcaption { padding: 12px 16px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); }
+
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+.card { border-top: 2px solid var(--text); padding-top: 16px; }
+.card h3 { margin: 0 0 6px; font: 500 14px/1.3 var(--mono); }
+.card p { margin: 0; font-size: 15px; color: var(--muted); }
+.card .tele { margin-top: 12px; font: 500 12px/1.4 var(--mono); letter-spacing: 0.04em; color: var(--text); }
+
+footer { padding: 40px 0; font: 400 13px/1.6 var(--mono); color: var(--muted); }
+footer a { display: inline-block; padding: 4px 0; color: var(--muted); }
+
+/* Rise-in on first view; only when JS runs (the page stays readable with JS off). */
+.js .rise {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+  transition-delay: var(--d, 0ms);
+}
+.js .rise.in { opacity: 1; transform: none; }
+
+@media (max-width: 760px) {
+  .hero .wrap { grid-template-columns: 1fr; min-height: 0; gap: 8px; padding-top: 36px; padding-bottom: 40px; }
+  .stage-col { max-width: 300px; order: -1; }
+  .grid2, .cards { grid-template-columns: 1fr; }
+  .site-nav ul li:not(:last-child) { display: none; }
+  .lede { font-size: 17px; }
+  .cmd { font-size: 13px; }
+  pre { font-size: 11.5px; }
+  section { padding: 52px 0; }
+  .hud { display: none; }
+}
+@media (max-width: 400px) {
+  .wrap { padding: 0 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .rise { opacity: 1; transform: none; }
+}

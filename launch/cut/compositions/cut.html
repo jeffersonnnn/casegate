@@ -1,0 +1,153 @@
+<template>
+  <!-- The cut's one scene (0-20 s). It packs the gate moment into a vertical frame: the claim and the
+       red ticks as the hook, the BLOCKED comment, the fix push, PASSED, then the install line. -->
+  <style>
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 700; src: url("assets/fonts/IBMPlexSansCondensed-700.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("assets/fonts/IBMPlexSans-400.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("assets/fonts/IBMPlexSans-500.woff2") format("woff2"); }
+    #root {
+      position: absolute; inset: 0; overflow: hidden; background-color: #0B0F0E;
+      background-image: linear-gradient(rgba(227,236,231,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(227,236,231,0.06) 1px, transparent 1px);
+      background-size: 120px 120px; background-position: -1px -1px;
+      font-family: "IBM Plex Mono", monospace; color: #E3ECE7;
+    }
+    .c-tele { position: absolute; top: 190px; font-size: 24px; letter-spacing: 0.08em; color: #8FA39A; text-transform: uppercase; }
+    #c-tele-l { left: 60px; }
+    #c-tele-r { right: 60px; }
+    #c-mark { position: absolute; left: 100px; top: -34px; width: 900px; height: 900px; }
+    #c-canvas { width: 900px; height: 900px; display: block; }
+    #c-state { position: absolute; left: 0; width: 1080px; top: 718px; text-align: center; font-size: 46px; font-weight: 500; }
+    #c-head { position: absolute; left: 0; width: 1080px; top: 860px; text-align: center; font-family: "IBM Plex Sans Condensed"; font-weight: 700; font-size: 104px; line-height: 1.05; }
+    #c-head span { display: inline-block; margin: 0 0.11em; }
+    #c-head .f { color: #FF5D5D; }
+    #c-chip { position: absolute; left: 54px; top: 704px; width: 972px; padding: 14px 24px; background: #141A18; border: 1px solid rgba(227,236,231,0.12); border-radius: 10px; }
+    #c-chip .m { font-size: 28px; color: #8FA39A; letter-spacing: 0.06em; text-transform: uppercase; }
+    #c-chip .c { font-size: 31px; margin-top: 4px; white-space: nowrap; }
+    #c-card { position: absolute; left: 40px; top: 830px; width: 1000px; height: 490px; background: #0d1117; border: 1px solid #3d444d; border-radius: 12px; overflow: hidden; font-family: "IBM Plex Sans", sans-serif; color: #f0f6fc; }
+    .cc { position: absolute; left: 0; top: 0; width: 100%; padding: 26px 36px; }
+    .cc-head { font-size: 28px; color: #9198a1; margin-bottom: 16px; }
+    .cc-head b { color: #f0f6fc; font-weight: 600; }
+    .cc h3 { font-size: 54px; font-weight: 600; margin-bottom: 14px; }
+    .cc p { font-size: 36px; margin-bottom: 20px; }
+    .cc table { border-collapse: collapse; font-size: 30px; margin-bottom: 18px; }
+    .cc td, .cc th { border: 1px solid #3d444d; padding: 8px 18px; }
+    .cc th { font-weight: 600; }
+    .cc td.n { text-align: right; }
+    .cc .sum { font-size: 32px; }
+    .cc .hl { position: relative; isolation: isolate; display: inline-block; }
+    .cc .hlbar { position: absolute; inset: -2px -8px; background: rgba(255,93,93,0.16); border-radius: 4px; z-index: -1; }
+    #c-ticks { position: absolute; left: 192px; top: 1420px; width: 696px; height: 140px; }
+    .ct { position: absolute; bottom: 0; width: 24px; background: #8FA39A; border-radius: 2px; }
+    #c-base { position: absolute; left: 172px; top: 1561px; width: 736px; height: 1px; background: rgba(227,236,231,0.24); }
+    #c-word { position: absolute; left: 0; width: 1080px; top: 950px; text-align: center; font-size: 168px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+    #c-cmd { position: absolute; left: 260px; top: 1170px; width: 560px; display: flex; justify-content: center; align-items: center; gap: 22px; padding: 20px 0; background: #141A18; border: 1px solid rgba(227,236,231,0.12); border-radius: 12px; font-size: 52px; }
+    #c-cmd .p { color: #3DDC84; }
+    #c-cmd .ch { display: inline-block; }
+  </style>
+  <div id="root" data-composition-id="cut" data-width="1080" data-height="1920">
+    <div id="c-tele-l" class="c-tele" data-layout-ignore>eval-gate · PR #1</div>
+    <div id="c-tele-r" class="c-tele" data-layout-ignore>casegate 0.1.0</div>
+    <div id="c-mark"><canvas id="c-canvas" width="900" height="900"></canvas></div>
+    <div id="c-state">✓ pass</div>
+    <div id="c-head"><span>Unit</span><span>tests</span><span>pass.</span><br><span>The</span><span>agent</span><span>got</span><span class="f">worse.</span></div>
+    <div id="c-chip"><div class="m">push 2 · toy-agent@7</div><div class="c">fix: return money in dollars from get_order again</div></div>
+    <div id="c-card">
+      <div class="cc" id="c-block">
+        <div class="cc-head"><b>github-actions</b> commented now</div>
+        <h3>✗ casegate gate: BLOCKED</h3>
+        <p><span class="hl"><span class="hlbar" id="c-hl1"></span>Pass rate fell 12.0 points (limit 8.0).</span></p>
+        <table>
+          <tr><th>metric</th><th>baseline</th><th>run</th><th>delta</th></tr>
+          <tr><td>pass rate</td><td class="n">0.973</td><td class="n">0.853</td><td class="n">−0.120</td></tr>
+          <tr><td>must-pass (adversarial)</td><td class="n">3/3</td><td class="n">2/3</td><td class="n">−1</td></tr>
+        </table>
+        <div class="sum"><span class="hl"><span class="hlbar" id="c-hl2"></span>▾ Flipped pass → fail (2)</span></div>
+      </div>
+      <div class="cc" id="c-pass">
+        <div class="cc-head"><b>github-actions</b> commented now · edited</div>
+        <h3>✓ casegate gate: PASSED</h3>
+        <p>Pass rate unchanged (limit 8.0).</p>
+        <table>
+          <tr><th>metric</th><th>baseline</th><th>run</th><th>delta</th></tr>
+          <tr><td>pass rate</td><td class="n">0.973</td><td class="n">0.973</td><td class="n">0.000</td></tr>
+          <tr><td>must-pass (adversarial)</td><td class="n">3/3</td><td class="n">3/3</td><td class="n">0</td></tr>
+        </table>
+        <div class="sum">▾ Flipped pass → fail (0)</div>
+      </div>
+    </div>
+    <div id="c-ticks"></div>
+    <div id="c-base"></div>
+    <div id="c-word">casegate</div>
+    <div id="c-cmd"><span class="p">$</span><code id="c-cmdtext"></code></div>
+  </div>
+  <script src="assets/mark3d.js"></script>
+  <script>
+    (function () {
+      const FPS = 30;
+      // Heights 8 + round(36 x mean_score) (DESIGN §8): regression = casegate-run.json, fix = baseline.json.
+      const RUN = [24, 22, 44, 44, 41, 44, 44, 44, 44, 44, 44, 44, 42, 44, 44];
+      const BASE = [44, 44, 44, 44, 44, 44, 44, 44, 44, 43, 44, 44, 42, 44, 44];
+      const row = document.getElementById("c-ticks");
+      const mk = (k, h, id) => { const el = document.createElement("i"); el.className = "ct"; el.id = id;
+        el.style.left = k * 48 + "px"; el.style.height = h * 3 + "px"; row.appendChild(el); return el; };
+      const reg = RUN.map((h, k) => mk(k, h, "c-r" + k));
+      const fix = BASE.map((h, k) => mk(k, h, "c-x" + k));
+      const cmd = document.getElementById("c-cmdtext");
+      const chars = [..."uv add casegate"].map((c, i) => { const s = document.createElement("span"); s.className = "ch"; s.id = "c-c" + i; s.textContent = c === " " ? " " : c; cmd.appendChild(s); return s; });
+
+      // Scene frame -> DESIGN §4 cycle frame. Drop (cycle 82) = frame 75; PASSED colour (cycle 141) = frame 351.
+      function cycleFrame(sf) {
+        if (sf < 83) return sf + 7;
+        if (sf < 335) return 90;
+        if (sf < 366) return sf - 210;
+        return 0;
+      }
+      const stateEl = document.getElementById("c-state");
+      const clock = { t: 0 };
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["cut-mark"] = CasegateMark.create(document.getElementById("c-canvas"), 900).then((mark) => {
+        const draw = () => {
+          const st = mark.render(cycleFrame(Math.round(clock.t * FPS)) / FPS, 0);
+          stateEl.textContent = st.f ? "✗ blocked" : "✓ pass";
+          stateEl.style.color = st.f ? "#FF5D5D" : "#3DDC84";
+        };
+        const tl = gsap.timeline({ paused: true });
+        tl.to(clock, { t: 20, duration: 20, ease: "none", onUpdate: draw }, 0);
+        // Frame 0 is the hook: the claim and the mark. The cases tick in (a tick each, 0.1 s apart).
+        reg.forEach((el, k) => tl.fromTo(el, { scaleY: 0, transformOrigin: "50% 100%" }, { keyframes: [{ scaleY: 1.1, duration: 0.1, ease: "power3.out" }, { scaleY: 1, duration: 0.1, ease: "power2.inOut" }] }, 0.1 + k * 0.1));
+        tl.to(["#c-r0", "#c-r1"], { backgroundColor: "#FF5D5D", duration: 0.12, ease: "none" }, 1.7);
+        tl.set(fix, { scaleY: 0, transformOrigin: "50% 100%" }, 0);
+        // Drop on frame 75 (thud). The claim steps away, the comment rises into its place.
+        tl.to("#c-head span", { opacity: 0, filter: "blur(6px)", duration: 0.13, stagger: 0.02, ease: "power3.in" }, 2.42);
+        tl.fromTo("#c-card", { y: 140, opacity: 0, filter: "blur(12px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 2.6);
+        tl.fromTo("#c-card", { scaleY: 1 }, { keyframes: [{ scaleY: 0.97, duration: 0.06, ease: "none" }, { scaleY: 1, duration: 0.3, ease: "elastic.out(1, 0.7)" }], transformOrigin: "50% 100%" }, 2.8);
+        tl.set("#c-pass", { opacity: 0 }, 0);
+        // 2.2 s between the highlights: time to read the headline before the eye moves to the flips.
+        tl.fromTo("#c-hl1", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 3.7);
+        tl.fromTo("#c-hl2", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 5.9);
+        // Push 2: the chip takes the state line, the cases run again (8.6 + 0.1 k).
+        tl.to("#c-state", { opacity: 0, duration: 0.15, ease: "power2.in" }, 7.95);
+        tl.fromTo("#c-chip", { y: 30, opacity: 0, filter: "blur(8px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, 8.1);
+        reg.forEach((el, k) => tl.to(el, { scaleY: 0, duration: 0.08, ease: "power3.in" }, 8.6 + k * 0.1 - 0.04));
+        fix.forEach((el, k) => tl.fromTo(el, { scaleY: 0 }, { keyframes: [{ scaleY: 1.1, duration: 0.1, ease: "power3.out" }, { scaleY: 1, duration: 0.1, ease: "power2.inOut" }] }, 8.6 + k * 0.1));
+        tl.to("#c-chip", { y: -20, opacity: 0, filter: "blur(8px)", duration: 0.25, ease: "power3.in" }, 10.9);
+        tl.to("#c-state", { opacity: 1, duration: 0.2, ease: "power2.out" }, 11.15);
+        // The same comment is edited on frame 351 (click): BLOCKED -> PASSED.
+        tl.to("#c-block", { opacity: 0, filter: "blur(8px)", duration: 0.067, ease: "power2.in" }, 11.667);
+        tl.fromTo("#c-pass", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.067, ease: "power2.out" }, 11.667);
+        tl.fromTo("#c-card", { scale: 1 }, { keyframes: [{ scale: 1.015, duration: 0.05, ease: "power2.out" }, { scale: 1, duration: 0.3, ease: "power2.out" }], transformOrigin: "50% 50%" }, 11.7);
+        // The comment clears first so the mark travels to the centre alone; the install line gets the last 3.5 s.
+        tl.to("#c-card", { y: 80, opacity: 0, filter: "blur(10px)", duration: 0.3, ease: "power3.in" }, 15.0);
+        tl.to(["#c-state", "#c-tele-l"], { opacity: 0, duration: 0.2, ease: "power3.in" }, 15.0);
+        tl.to("#c-mark", { y: 260, duration: 0.8, ease: "power3.inOut" }, 15.1);
+        tl.to(["#c-ticks", "#c-base"], { y: 90, duration: 0.8, ease: "power3.inOut" }, 15.1);
+        tl.fromTo("#c-word", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.55, ease: "power3.out" }, 15.75);
+        tl.fromTo("#c-cmd", { opacity: 0, filter: "blur(8px)", y: 20 }, { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.35, ease: "expo.out" }, 16.2);
+        chars.forEach((c, i) => tl.fromTo(c, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, 16.45 + i * 0.05));
+        window.__timelines["cut"] = tl;
+      });
+    })();
+  </script>
+</template>

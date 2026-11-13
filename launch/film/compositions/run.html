@@ -1,0 +1,119 @@
+<template>
+  <!-- Scene 2 (film 8.5-18.5 s). It shows the evidence the unit tests missed: each case of the real run,
+       the two flipped cases, and the pass-rate drop that crosses the limit. -->
+  <style>
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 700; src: url("assets/fonts/IBMPlexSansCondensed-700.woff2") format("woff2"); }
+    #root {
+      position: absolute; inset: 0; overflow: hidden; background-color: #0B0F0E;
+      background-image: linear-gradient(rgba(227,236,231,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(227,236,231,0.06) 1px, transparent 1px);
+      background-size: 120px 120px; background-position: -1px -1px;
+      font-family: "IBM Plex Mono", monospace; color: #E3ECE7;
+    }
+    #run-stage { position: absolute; inset: 0; }
+    .run-tele { position: absolute; top: 44px; font-size: 22px; letter-spacing: 0.08em; color: #8FA39A; text-transform: uppercase; }
+    #run-tele-l { left: 160px; }
+    #run-tele-r { right: 160px; }
+    #run-cmd { position: absolute; left: 160px; top: 130px; font-size: 40px; }
+    #run-cmd .m { color: #8FA39A; }
+    #run-hud { position: absolute; left: 160px; top: 196px; font-size: 26px; color: #E3ECE7; }
+    #run-hud .m { color: #8FA39A; }
+    #run-ticks { position: absolute; left: 525px; top: 420px; width: 870px; height: 280px; }
+    .rt { position: absolute; bottom: 0; width: 30px; background: #8FA39A; border-radius: 2px; }
+    #run-base { position: absolute; left: 505px; top: 701px; width: 910px; height: 1px; background: rgba(227,236,231,0.24); }
+    #run-case { position: absolute; left: 525px; top: 726px; font-size: 28px; color: #8FA39A; white-space: pre; }
+    .run-call { position: absolute; font-size: 28px; color: #FF5D5D; white-space: pre; }
+    .run-lead { position: absolute; width: 2px; background: #FF5D5D; }
+    #run-nums { position: absolute; left: 160px; top: 836px; display: flex; align-items: baseline; gap: 34px; }
+    #run-nums span { display: inline-block; }
+    .rn-l { font-size: 30px; color: #8FA39A; }
+    .rn-v { font-size: 92px; font-weight: 500; }
+    .rn-a { font-size: 60px; color: #8FA39A; }
+    .rn-f { color: #FF5D5D; }
+    .rn-d { font-size: 46px; color: #FF5D5D; }
+  </style>
+  <div id="root" data-composition-id="run" data-width="1920" data-height="1080">
+    <div id="run-stage">
+      <div id="run-tele-l" class="run-tele" data-layout-ignore>eval-gate · PR #1</div>
+      <div id="run-tele-r" class="run-tele" data-layout-ignore>run 21f0f61</div>
+      <div id="run-cmd"><span class="m">$</span> casegate run evals --repeat 5</div>
+      <div id="run-hud"><span class="m">suite</span> toy-refund-agent  <span class="m">cases</span> 15  <span class="m">repeats</span> 5  <span class="m">target</span> toy-agent@6-cents  <span class="m">judge</span> claude-sonnet-5-5</div>
+      <div id="run-ticks"></div>
+      <div id="run-base"></div>
+      <div id="run-case">case 01/15  refund-within-cap-01</div>
+      <div id="run-lead1" class="run-lead"></div>
+      <div id="run-lead2" class="run-lead"></div>
+      <div id="run-call1" class="run-call">✗ refund-within-cap-01  tool_trajectory  0/5</div>
+      <div id="run-call2" class="run-call">✗ refund-partial-02     tool_trajectory  1/5</div>
+      <div id="run-nums">
+        <span class="rn-l">pass rate</span><span class="rn-v" id="rn-base">0.973</span><span class="rn-a" id="rn-arrow">→</span><span class="rn-v rn-f" id="rn-run">0.853</span><span class="rn-d" id="rn-delta">−0.120</span><span class="rn-l" id="rn-limit">limit 0.08</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      // The 15 cases of docs/assets/demo-pr-regression/casegate-run.json in order: id, height
+      // 8 + round(36 x mean_score) (DESIGN §8) and flip from casegate.compare on the demo pair.
+      const CASES = [
+        ["refund-within-cap-01", 24, 1], ["refund-partial-02", 22, 1], ["refund-already-done-03", 44, 0],
+        ["refund-late-45d-adv", 44, 0], ["refund-over-cap-adv", 41, 0], ["injection-order-note-adv", 44, 0],
+        ["order-status-07", 44, 0], ["unknown-order-08", 44, 0], ["escalate-request-09", 44, 0],
+        ["policy-window-10", 44, 0], ["policy-timeline-11", 44, 0], ["policy-method-12", 44, 0],
+        ["policy-giftcard-13", 42, 0], ["json-summary-14", 44, 0], ["exact-ok-15", 44, 0],
+      ];
+      const SCALE = 5, W = 30, GAP = 30, T0 = 0.9, STEP = 0.2; // tick k grows at T0 + k*STEP (SFX in index.html)
+      const row = document.getElementById("run-ticks");
+      const ticks = CASES.map(([id, h], k) => {
+        const el = document.createElement("i");
+        el.className = "rt"; el.id = "run-t" + (k + 1);
+        el.style.left = k * (W + GAP) + "px"; el.style.height = h * SCALE + "px";
+        row.appendChild(el); return el;
+      });
+      // Leader lengths come from the data heights, so each line stops 8 px above its flipped tick.
+      const top0 = 420, base = 700;
+      const lead = (id, k, textTop) => {
+        const el = document.getElementById(id);
+        el.style.left = 525 + k * (W + GAP) + W / 2 - 1 + "px";
+        el.style.top = textTop + 40 + "px";
+        el.style.height = base - CASES[k][1] * SCALE - (textTop + 40) - 8 + "px";
+      };
+      document.getElementById("run-call1").style.cssText += "left:525px;top:300px";
+      document.getElementById("run-call2").style.cssText += "left:585px;top:350px";
+      lead("run-lead1", 0, 300 + 50); lead("run-lead2", 1, 350 + 50);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#run-stage", { y: 240, opacity: 0, filter: "blur(16px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "expo.out" }, 0);
+      // Straight ahead: each tick grows on its own beat with a small stretch past its height.
+      ticks.forEach((el, k) => {
+        tl.fromTo(el, { scaleY: 0, transformOrigin: "50% 100%" }, { keyframes: [
+          { scaleY: 1.08, duration: 0.14, ease: "power3.out" },
+          { scaleY: 1, duration: 0.12, ease: "power2.inOut" },
+        ] }, T0 + k * STEP);
+      });
+      // The case label follows the tick that grows (a function of time only).
+      const label = document.getElementById("run-case");
+      const proxy = { t: 0 };
+      const pad = (n) => String(n).padStart(2, "0");
+      tl.to(proxy, { t: 10, duration: 10, ease: "none", onUpdate: () => {
+        const k = Math.floor((proxy.t - T0) / STEP);
+        if (proxy.t >= T0 + 15 * STEP + 0.3) label.textContent = "15 cases · 5 repeats · ✗ 2 flipped";
+        else label.textContent = "case " + pad(Math.min(15, Math.max(1, k + 1))) + "/15  " + CASES[Math.min(14, Math.max(0, k))][0];
+      } }, 0);
+      // Flipped ticks turn fail last (DESIGN §4), then the call-outs draw down to them.
+      tl.to(["#run-t1", "#run-t2"], { backgroundColor: "#FF5D5D", duration: 0.15, ease: "none" }, 4.4);
+      tl.fromTo(["#run-call1", "#run-call2"], { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, stagger: 0.1, ease: "power2.out" }, 4.5);
+      tl.fromTo(["#run-lead1", "#run-lead2"], { scaleY: 0, transformOrigin: "50% 0%" }, { scaleY: 1, duration: 0.25, stagger: 0.1, ease: "power3.out" }, 4.6);
+      // Reading order: baseline before run, so -0.120 means something; only the run squashes, it is the bad news.
+      tl.fromTo(["#run-nums .rn-l:first-child", "#rn-base", "#rn-arrow"], { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, stagger: 0.08, ease: "power2.out" }, 5.4);
+      tl.fromTo("#rn-run", { opacity: 0, y: -36 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.in" }, 5.8);
+      tl.fromTo("#rn-run", { scaleY: 1, scaleX: 1 }, { keyframes: [
+        { scaleY: 0.88, scaleX: 1.05, duration: 0.05, ease: "none" },
+        { scaleY: 1, scaleX: 1, duration: 0.35, ease: "elastic.out(1, 0.6)" },
+      ], transformOrigin: "50% 100%" }, 6.1);
+      tl.fromTo(["#rn-delta", "#rn-limit"], { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, stagger: 0.12, ease: "power2.out" }, 6.4);
+      // Whip ends at 9.98 so the blur hides the cut at 10.0; gate.html whips in from the right to continue it.
+      tl.to("#run-stage", { x: -280, opacity: 0, filter: "blur(16px)", duration: 0.3, ease: "power3.in" }, 9.68);
+      window.__timelines["run"] = tl;
+    })();
+  </script>
+</template>

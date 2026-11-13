@@ -148,3 +148,28 @@ One request end to end: `casegate run evals --repeat 5`, then `casegate gate` on
 **Why:** a judge score is only worth gating on if a person gives the same verdict. Kappa removes the agreement that chance alone gives (`src/casegate/calibrate.py:131-139` `_kappa`); when one class is the only class, kappa is undefined and the output says so instead of printing a number. Calibration never gates: it exits 0, or 2 on bad input (`src/casegate/cli.py:210-233` `calibrate_cmd`).
 **Say it like this:** "I label 40 judge results by hand, and casegate tells me how often the judge agrees with me, corrected for chance, and lists each case where we disagree."
 **Check:** a judge and a person agree on 7 of 10 rows. The judge passes 7 and the person passes 6. What is kappa? (0.35: `tests/test_calibrate.py:47` `test_metrics_match_hand_computation`.) What is the real kappa? ([TBD: needs `evals/labels.csv`, 40 human labels, OPEN-5].)
+
+## Side tour: the launch videos (M5)
+
+The launch film tells the same story as the demo PR: a change that passes the unit tests, a gate that blocks it, a fix that passes. These stops show how the video keeps picture, sound and data true.
+
+### Stop 18: the regression on screen comes from the run file
+`launch/film/compositions/run.html:57-63` `CASES`
+**What:** the 15 cases of the demo PR run in order, each with its tick height `8 + round(36 × mean_score)` and a flip flag.
+**Why:** no number goes into a video unless a run file shows it (BUILD.md "Rules for builders"); the ticks use the same rule as the site (`docs/DESIGN.md` §8), from `docs/assets/demo-pr-regression/casegate-run.json`.
+**Say it like this:** "Every tick in the film is a real case from the blocked PR run, with the same height rule as the site."
+**Check:** why are the green ticks after the fix drawn with the baseline heights? (the push-2 run JSON is not in the repo, launch/SPEC.md.)
+
+### Stop 19: the logo pose is chosen per frame
+`launch/film/compositions/gate.html:145-150` `cycleFrame`
+**What:** maps a scene frame to a frame of the 5.2 s logo cycle: up and drop, hold blocked, lift, pass pose.
+**Why:** a free-running cycle would put the arm drop between frames or on the wrong beat; with the map, the drop lands on film frame 619 and the green colour on frame 880 (`launch/shared/mark3d.js:3-4`, launch/SPEC.md "Logo cycle at 30 fps").
+**Say it like this:** "The video never plays the logo animation on its own clock; it asks for the exact pose of each frame."
+**Check:** scene frame 64 gives which cycle frame, and why is that the drop? (82: the first cycle frame at or below `DOWN`.)
+
+### Stop 20: the sound is placed by its peak
+`launch/film/index.html:27-28`
+**What:** the thud starts so its peak lands on the arm-drop frame; the click starts so its peak lands one frame after PASSED.
+**Why:** a sound file has silence before its peak, so the start time is the frame time minus the peak offset (launch/SPEC.md "Sound sync"). Measured on the delivered file: thud peak at frame 619.01, click peak at frame 880.35 (launch/REVIEW.md "Sync").
+**Say it like this:** "I measured where each sound peaks and started it early by that much, then measured the rendered file to check it."
+**Check:** the SPEC formula gives a thud start of 20.560 s, the file says 20.58 s. Which one is right, and how do you know? (the file: the measured peak is 0 frames off.)

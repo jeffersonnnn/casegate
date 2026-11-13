@@ -53,3 +53,15 @@
 **Trade-off:** judge scores vary; casegate measures that instead of hiding it.
 **Evidence:** 0.8, 0.85, 0.8 on the same reply (FACTS.md §4.2).
 **At 10x:** k = 3 samples on must-pass cases only, as the toy suite already does.
+
+### Why HyperFrames for the launch videos and not Remotion or a screen recording?  (launch/SPEC.md, launch/REVIEW.md)
+**Answer:** the videos are HTML compositions rendered by HyperFrames, so the real 3D logo scene, the DESIGN tokens and the IBM Plex fonts are the same code and files as the site.
+**Trade-off:** HyperFrames needs every animation to be seek-safe (a function of time only), so the logo cycle and the case label had to be written as pure functions of the frame (`launch/film/compositions/gate.html:145-150` `cycleFrame`, `launch/film/compositions/run.html:97-101`).
+**Evidence:** `launch-film.mp4` measures 45.000000 s at 30 fps, 1350 frames, and the thud peak lands 0 frames from the arm drop (`docs/assets/runs/launch-assets-m5.json`, launch/REVIEW.md "Sync").
+**At 10x:** one shared data file for the frame times, so picture, sound clips and the bed script read the same numbers.
+
+### Why rebuild the PR comment in HTML and not show the screenshot?  (launch/REVIEW.md "Creative calls")
+**Answer:** the card is set in HTML at about 1.6× from the real comment text, because the 828 px screenshot goes soft at 1080p.
+**Trade-off:** a transcription can hold a typo, and the screen is no longer a pixel copy of GitHub.
+**Evidence:** every value on the card is in `docs/assets/demo-pr-regression/casegate-comment.md` (BLOCKED) or `docs/assets/pr-comment-passed.png` (PASSED); launch/SPEC.md lists the source of each figure.
+**At 10x:** render the comment from the Markdown with the same code GitHub uses, so the card cannot drift from the text.

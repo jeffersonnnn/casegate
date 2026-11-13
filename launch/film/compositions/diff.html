@@ -1,0 +1,82 @@
+<template>
+  <!-- Scene 1 (film 0-8.5 s). It starts on the real five-line diff and its green checks, so the viewer
+       believes the change is safe before run.html shows that the agent got worse. -->
+  <style>
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 700; src: url("assets/fonts/IBMPlexSansCondensed-700.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 500; src: url("assets/fonts/IBMPlexSansCondensed-500.woff2") format("woff2"); }
+    #root {
+      position: absolute; inset: 0; overflow: hidden; background-color: #0B0F0E;
+      background-image: linear-gradient(rgba(227,236,231,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(227,236,231,0.06) 1px, transparent 1px);
+      background-size: 120px 120px; background-position: -1px -1px;
+      font-family: "IBM Plex Mono", monospace; color: #E3ECE7;
+    }
+    #diff-stage { position: absolute; inset: 0; }
+    .diff-tele { position: absolute; top: 44px; font-size: 22px; letter-spacing: 0.08em; color: #8FA39A; text-transform: uppercase; }
+    #diff-tele-l { left: 160px; }
+    #diff-tele-r { right: 160px; }
+    #diff-title { position: absolute; left: 160px; top: 108px; font-family: "IBM Plex Sans Condensed"; font-weight: 700; font-size: 76px; line-height: 1; }
+    #diff-title span { display: inline-block; }
+    #diff-panel {
+      position: absolute; left: 160px; top: 250px; width: 1600px; background: #141A18;
+      border: 1px solid rgba(227,236,231,0.12); border-radius: 10px; overflow: hidden;
+    }
+    #diff-head { display: flex; justify-content: space-between; padding: 22px 32px; border-bottom: 1px solid rgba(227,236,231,0.12); font-size: 24px; color: #8FA39A; }
+    #diff-head b { color: #E3ECE7; font-weight: 500; }
+    #diff-code { padding: 18px 0 22px; font-size: 30px; line-height: 52px; white-space: pre; }
+    .dl { padding: 0 32px; color: #8FA39A; }
+    .dl.add { color: #E3ECE7; position: relative; isolation: isolate; }
+    .dl.add .sw { position: absolute; inset: 0; background: rgba(61,220,132,0.12); z-index: -1; }
+    .dl.add i { font-style: normal; color: #3DDC84; }
+    #diff-checks { position: absolute; left: 160px; top: 868px; display: flex; gap: 64px; font-size: 36px; }
+    #diff-checks span { display: inline-block; }
+    .ok { color: #3DDC84; }
+    #diff-big { position: absolute; left: 0; right: 0; top: 400px; text-align: center; font-family: "IBM Plex Sans Condensed"; font-weight: 700; font-size: 168px; line-height: 1; letter-spacing: -0.01em; }
+    #diff-big span { display: inline-block; margin: 0 0.12em; }
+    #diff-big .f { color: #FF5D5D; }
+  </style>
+  <div id="root" data-composition-id="diff" data-width="1920" data-height="1080">
+    <div id="diff-stage">
+      <div id="diff-tele-l" class="diff-tele" data-layout-ignore>PR #1 · jeffersonnnn/casegate</div>
+      <div id="diff-tele-r" class="diff-tele" data-layout-ignore>push 1 · toy-agent@6-cents</div>
+      <div id="diff-title"><span>A</span> <span>small</span> <span>refactor.</span></div>
+      <div id="diff-dim">
+        <div id="diff-panel">
+          <div id="diff-head"><span><b>examples/toy_agent/store.py</b>  +5</span><span>refactor: return money as integer cents from get_order</span></div>
+          <div id="diff-code"><div class="dl">     for key in ("delivered_at", "expected_delivery"):</div><div class="dl">         value = data[key]</div><div class="dl">         data[key] = value.isoformat() if value is not None else None</div><div class="dl add" id="diff-a1"><span class="sw"></span><i>+</i>    # Money as integer cents, so float rounding never shows up in tool results.</div><div class="dl add" id="diff-a2"><span class="sw"></span><i>+</i>    for key in ("amount", "refunded_amount"):</div><div class="dl add" id="diff-a3"><span class="sw"></span><i>+</i>        data[key] = round(data[key] * 100)</div><div class="dl add" id="diff-a4"><span class="sw"></span><i>+</i>    for item in data["items"]:</div><div class="dl add" id="diff-a5"><span class="sw"></span><i>+</i>        item["unit_price"] = round(item["unit_price"] * 100)</div><div class="dl">     return data</div></div>
+        </div>
+        <div id="diff-checks"><span class="ok">✓ unit tests  468 passed</span><span class="ok">✓ lint</span></div>
+      </div>
+      <div id="diff-big"><span>The</span><span>agent</span><span>got</span><span class="f" id="diff-worse">worse.</span></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const q = (s) => document.querySelectorAll("#diff-stage " + s);
+      // Frame 0 is the whole real diff; a green sweep marks the five added lines.
+      q(".dl.add .sw").forEach((el, i) => {
+        tl.fromTo(el, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.35, ease: "power3.out" }, 0.4 + i * 0.25);
+      });
+      // Blur in with no translate: a rise here is the banned "every element fading up" (launch/SPEC.md).
+      tl.fromTo(q("#diff-title span"), { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, stagger: 0.067, ease: "power2.out" }, 0.3);
+      // Camera: the panel rises to make room for the checks (ease both ways).
+      tl.fromTo("#diff-dim", { y: 0 }, { y: -60, duration: 0.6, ease: "power2.inOut" }, 2.6);
+      tl.fromTo(q("#diff-checks span"), { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, stagger: 0.12, ease: "power2.out" }, 3.0);
+      // Focus shift: everything steps back, the claim takes the frame.
+      tl.to(q("#diff-title span"), { opacity: 0, filter: "blur(6px)", duration: 0.15, stagger: 0.04, ease: "power3.in" }, 4.9);
+      tl.to("#diff-dim", { opacity: 0.18, filter: "blur(5px)", scale: 0.96, duration: 0.5, ease: "power2.inOut" }, 5.1);
+      tl.fromTo(q("#diff-big span"), { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, stagger: 0.09, ease: "power2.out" }, 5.4);
+      // "worse." lands late and heavy: anticipation up, drop, small squash on contact.
+      tl.set("#diff-worse", { y: -40, scaleX: 1, scaleY: 1, transformOrigin: "50% 100%" }, 0);
+      tl.to("#diff-worse", { keyframes: [
+        { y: 0, duration: 0.32, ease: "power3.in" },
+        { scaleY: 0.86, scaleX: 1.06, duration: 0.04, ease: "none" },
+        { scaleY: 1, scaleX: 1, duration: 0.35, ease: "elastic.out(1, 0.6)" },
+      ] }, 5.62);
+      // Whip ends at 8.48 so the blur hides the cut at 8.5; run.html enters from below to continue the move.
+      tl.to("#diff-stage", { y: -240, opacity: 0, filter: "blur(16px)", duration: 0.3, ease: "power3.in" }, 8.18);
+      window.__timelines["diff"] = tl;
+    })();
+  </script>
+</template>

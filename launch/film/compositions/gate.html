@@ -1,0 +1,212 @@
+<template>
+  <!-- Scene 3 (film 18.5-45 s). It is the payoff: the gate blocks the pull request, the fix push passes,
+       then the claim and the end card. One stage, so the mark carries through with no cut. -->
+  <style>
+    @font-face { font-family: "IBM Plex Sans Condensed"; font-weight: 700; src: url("assets/fonts/IBMPlexSansCondensed-700.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("assets/fonts/IBMPlexSans-400.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("assets/fonts/IBMPlexSans-500.woff2") format("woff2"); }
+    #root {
+      position: absolute; inset: 0; overflow: hidden; background-color: #0B0F0E;
+      background-image: linear-gradient(rgba(227,236,231,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(227,236,231,0.06) 1px, transparent 1px);
+      background-size: 120px 120px; background-position: -1px -1px;
+      font-family: "IBM Plex Mono", monospace; color: #E3ECE7;
+    }
+    #gate-stage { position: absolute; inset: 0; }
+    .g-tele { position: absolute; top: 44px; font-size: 20px; letter-spacing: 0.08em; color: #8FA39A; text-transform: uppercase; }
+    #g-tele-l { left: 160px; }
+    #g-tele-r { right: 160px; }
+    /* The mark: a 760 px WebGL canvas in a wrapper the camera moves. */
+    #g-mark { position: absolute; left: 580px; top: 110px; width: 760px; height: 760px; }
+    #g-canvas { width: 760px; height: 760px; display: block; }
+    #g-state { position: absolute; left: 580px; top: 846px; width: 760px; text-align: center; font-size: 40px; font-weight: 500; }
+    /* Tick row and push chip sit under the mark's place after it moves left, so the re-run and the lift read together. */
+    #g-ticks { position: absolute; left: 308px; top: 790px; width: 290px; height: 70px; }
+    .gt { position: absolute; bottom: 0; width: 10px; background: #8FA39A; border-radius: 1px; }
+    .gt.f { background: #FF5D5D; }
+    #g-chip { position: absolute; left: 60px; top: 880px; width: 790px; padding: 16px 22px; background: #141A18; border: 1px solid rgba(227,236,231,0.12); border-radius: 8px; }
+    #g-chip .m { font-size: 20px; color: #8FA39A; letter-spacing: 0.06em; text-transform: uppercase; }
+    #g-chip .c { font-size: 24px; margin-top: 6px; white-space: nowrap; }
+    /* The sticky comment, rebuilt at about 1.6x from casegate-comment.md and pr-comment-passed.png. */
+    #g-card { position: absolute; left: 880px; top: 96px; width: 960px; height: 900px; background: #0d1117; border: 1px solid #3d444d; border-radius: 10px; overflow: hidden; font-family: "IBM Plex Sans", sans-serif; color: #f0f6fc; }
+    .gc { position: absolute; left: 0; top: 0; width: 100%; padding: 26px 34px; }
+    .gc-head { font-size: 22px; color: #9198a1; margin-bottom: 22px; }
+    .gc-head b { color: #f0f6fc; font-weight: 600; }
+    .gc-head .bot { display: inline-block; border: 1px solid #3d444d; border-radius: 12px; padding: 0 9px; font-size: 18px; margin: 0 6px; }
+    .gc h3 { font-size: 40px; font-weight: 600; margin-bottom: 18px; }
+    .gc p.lede { font-size: 28px; margin-bottom: 22px; padding: 2px 6px; margin-left: -6px; display: inline-block; }
+    .gc .warn { border-left: 4px solid #9e6a03; padding: 6px 0 6px 20px; margin-bottom: 22px; font-size: 24px; }
+    .gc .warn .t { color: #d29922; margin-bottom: 8px; }
+    .gc table { border-collapse: collapse; font-size: 24px; margin-bottom: 20px; }
+    .gc td, .gc th { border: 1px solid #3d444d; padding: 9px 18px; }
+    .gc th { font-weight: 600; }
+    .gc td.n { text-align: right; }
+    .gc tr:nth-child(2n) td { background: #151b23; }
+    .gc .checks { font-size: 23px; line-height: 1.45; margin-bottom: 20px; }
+    .gc .sum { font-size: 24px; margin-bottom: 12px; }
+    .gc table.fl { font-size: 20px; }
+    .gc table.fl td { vertical-align: top; }
+    .gc .foot { font-size: 18px; color: #9198a1; margin-top: 18px; }
+    .gc .hl { position: relative; isolation: isolate; }
+    .gc .hlbar { position: absolute; inset: -2px -8px; background: rgba(255,93,93,0.16); border-radius: 4px; z-index: -1; }
+    #g-pass .hlbar { background: rgba(61,220,132,0.16); }
+    /* Claim and end card share this stage, so the mark is carried to the lockup, never docked (launch/SPEC.md BANNED). */
+    #g-h1 { position: absolute; left: 140px; top: 300px; width: 1100px; font-family: "IBM Plex Sans Condensed"; font-weight: 700; font-size: 112px; line-height: 1.02; }
+    #g-h1 span { display: inline-block; margin-right: 0.22em; }
+    #g-h1 .f { color: #FF5D5D; }
+    #g-word { position: absolute; left: 840px; top: 300px; font-size: 156px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+    #g-cmd { position: absolute; left: 846px; top: 520px; display: flex; align-items: center; gap: 22px; padding: 20px 30px; background: #141A18; border: 1px solid rgba(227,236,231,0.12); border-radius: 10px; font-size: 48px; }
+    #g-cmd .p { color: #3DDC84; }
+    #g-cmd .ch { display: inline-block; }
+    #g-endticks { position: absolute; left: 846px; top: 700px; width: 340px; height: 70px; }
+    .et { position: absolute; bottom: 0; width: 12px; background: #8FA39A; border-radius: 1px; }
+    #g-endnote { position: absolute; left: 846px; top: 790px; font-size: 26px; color: #8FA39A; }
+  </style>
+  <div id="root" data-composition-id="gate" data-width="1920" data-height="1080">
+    <div id="gate-stage">
+      <div id="g-tele-l" class="g-tele" data-layout-ignore>eval-gate · PR #1 · sticky comment</div>
+      <div id="g-tele-r" class="g-tele" data-layout-ignore>casegate 0.1.0</div>
+      <div id="g-mark"><canvas id="g-canvas" width="760" height="760"></canvas></div>
+      <div id="g-state">✓ pass</div>
+      <div id="g-ticks"></div>
+      <div id="g-chip"><div class="m">push 2 · toy-agent@7</div><div class="c">fix: return money in dollars from get_order again</div></div>
+      <div id="g-card">
+        <div class="gc" id="g-block">
+          <div class="gc-head"><b>github-actions</b><span class="bot">Bot</span> commented now</div>
+          <h3>✗ casegate gate: BLOCKED</h3>
+          <p class="lede hl" id="g-lede-b"><span class="hlbar" id="g-hl1"></span>Pass rate fell 12.0 points (limit 8.0).</p>
+          <div class="warn"><div class="t">⚠ Warning</div>target version changed: toy-agent@5 → toy-agent@6-cents</div>
+          <table>
+            <tr><th>metric</th><th>baseline</th><th>run</th><th>delta</th></tr>
+            <tr><td>pass rate</td><td class="n">0.973</td><td class="n">0.853</td><td class="n">−0.120</td></tr>
+            <tr><td>std across repeats</td><td class="n">0.037</td><td class="n">0.056</td><td class="n"></td></tr>
+            <tr><td>must-pass (adversarial)</td><td class="n">3/3</td><td class="n">2/3</td><td class="n">−1</td></tr>
+            <tr><td>error repeats</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+            <tr><td>cost</td><td class="n">$0.18</td><td class="n">$0.20</td><td class="n">+$0.01</td></tr>
+          </table>
+          <div class="checks"><b>Checks</b> ✓ scored · ✗ max_drop 0.120 &gt; 0.08 · ✓ max_errors 0 ≤ 0 · ✗ must_pass:adversarial refund-over-cap-adv 4/5</div>
+          <div class="sum">▾ Flipped pass → fail (2)</div>
+          <div class="hl" id="g-flips"><span class="hlbar" id="g-hl2"></span>
+          <table class="fl">
+            <tr><th>case</th><th>failing scorer</th><th>reason</th></tr>
+            <tr><td>refund-within-cap-01</td><td>tool_trajectory</td><td>expected subsequence get_account → get_order → issue_refund({"amount":{"lte":39.0},"order_id":"1042"}); got get_account…</td></tr>
+            <tr><td>refund-partial-02</td><td>tool_trajectory</td><td>expected subsequence get_order → issue_refund({"amount":{"gte":12.4,"lte":12.6}}); got get_account → get_order → search…</td></tr>
+          </table></div>
+          <div class="sum">▸ Flipped fail → pass (0)</div>
+          <div class="foot">baseline nogit · run 21f0f61 · casegate 0.1.0 · max-drop 0.08 · baseline std 0.037</div>
+        </div>
+        <div class="gc" id="g-pass">
+          <div class="gc-head"><b>github-actions</b><span class="bot">Bot</span> commented now · edited</div>
+          <h3>✓ casegate gate: PASSED</h3>
+          <p class="lede hl"><span class="hlbar" id="g-hl3"></span>Pass rate unchanged (limit 8.0).</p>
+          <div class="warn"><div class="t">⚠ Warning</div>target version changed: toy-agent@5 → toy-agent@7</div>
+          <table>
+            <tr><th>metric</th><th>baseline</th><th>run</th><th>delta</th></tr>
+            <tr><td>pass rate</td><td class="n">0.973</td><td class="n">0.973</td><td class="n">0.000</td></tr>
+            <tr><td>std across repeats</td><td class="n">0.037</td><td class="n">0.037</td><td class="n"></td></tr>
+            <tr><td>must-pass (adversarial)</td><td class="n">3/3</td><td class="n">3/3</td><td class="n">0</td></tr>
+            <tr><td>error repeats</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+            <tr><td>cost</td><td class="n">$0.18</td><td class="n">$0.19</td><td class="n">+$0.0053</td></tr>
+          </table>
+          <div class="checks"><b>Checks</b> ✓ scored · ✓ max_drop 0.000 ≤ 0.08 · ✓ max_errors 0 ≤ 0 · ✓ must_pass:adversarial</div>
+          <div class="sum">▾ Flipped pass → fail (0)</div>
+          <div class="sum">▸ Flipped fail → pass (0)</div>
+          <div class="foot">baseline nogit · run ee53e87 · casegate 0.1.0 · max-drop 0.08 · baseline std 0.037</div>
+        </div>
+      </div>
+      <div id="g-h1"><span>Block</span><span>the</span><span>pull</span><span>request</span><span>that</span><span>makes</span><span>your</span><span>agent</span><span class="f">worse.</span></div>
+      <div id="g-word">casegate</div>
+      <div id="g-cmd"><span class="p">$</span><code id="g-cmdtext"></code></div>
+      <div id="g-endticks"></div>
+      <div id="g-endnote">github.com/jeffersonnnn/casegate</div>
+    </div>
+  </div>
+  <script src="assets/mark3d.js"></script>
+  <script>
+    (function () {
+      const FPS = 30;
+      // Regression heights (casegate-run.json) and baseline heights (baseline.json), DESIGN §8.
+      const RUN = [24, 22, 44, 44, 41, 44, 44, 44, 44, 44, 44, 44, 42, 44, 44];
+      const BASE = [44, 44, 44, 44, 44, 44, 44, 44, 44, 43, 44, 44, 42, 44, 44];
+      const mini = document.getElementById("g-ticks"), endRow = document.getElementById("g-endticks");
+      const mk = (parent, cls, k, w, gap, h, id) => {
+        const el = document.createElement("i"); el.className = cls; el.id = id;
+        el.style.left = k * (w + gap) + "px"; el.style.height = h + "px"; parent.appendChild(el); return el;
+      };
+      const reg = RUN.map((h, k) => mk(mini, "gt" + (k < 2 ? " f" : ""), k, 10, 10, h * 1.5, "g-r" + k));
+      const fix = BASE.map((h, k) => mk(mini, "gt", k, 10, 10, h * 1.5, "g-x" + k));
+      BASE.forEach((h, k) => mk(endRow, "et", k, 12, 11, h * 1.5, "g-e" + k));
+      // Command typed letter by letter (the site's install chip text).
+      const cmdText = "uv add casegate", cmd = document.getElementById("g-cmdtext");
+      const chars = [...cmdText].map((c, i) => { const s = document.createElement("span"); s.className = "ch"; s.id = "g-c" + i; s.textContent = c === " " ? " " : c; cmd.appendChild(s); return s; });
+
+      // Mark pose: scene frame -> DESIGN §4 cycle frame (launch/SPEC.md "Logo cycle at 30 fps").
+      // Drop: cycle frame 82 = scene frame 64 = film frame 619. PASSED colour: cycle 141 = scene 325 = film 880.
+      function cycleFrame(sf) {
+        if (sf < 72) return sf + 18;      // up, anticipation, drop, settle
+        if (sf < 309) return 90;          // hold blocked
+        if (sf < 340) return sf - 184;    // lift back, colour to pass at cycle frame 141
+        return 0;                         // up: the pass pose
+      }
+      const expoOut = gsap.parseEase("expo.out");
+      // Secondary action on the end card: the mark turns in on Y as it lands.
+      const rotYAt = (t) => (t < 18.5 ? 0 : 0.55 * (1 - expoOut(Math.min(1, (t - 18.5) / 1.1))));
+      const stateEl = document.getElementById("g-state");
+      const clock = { t: 0 };
+
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["gate-mark"] = CasegateMark.create(document.getElementById("g-canvas"), 760).then((mark) => {
+        const draw = () => {
+          const sf = Math.round(clock.t * FPS);
+          const st = mark.render(cycleFrame(sf) / FPS, rotYAt(clock.t));
+          stateEl.textContent = st.f ? "✗ blocked" : "✓ pass";
+          stateEl.style.color = st.f ? "#FF5D5D" : "#3DDC84";
+        };
+        const tl = gsap.timeline({ paused: true });
+        tl.to(clock, { t: 26.5, duration: 26.5, ease: "none", onUpdate: draw }, 0);
+        // Whip in from the right (matches the run scene's whip out to the left).
+        tl.fromTo("#gate-stage", { x: 280, filter: "blur(16px)" }, { x: 0, filter: "blur(0px)", duration: 0.35, ease: "expo.out" }, 0);
+        // Staging: the mark is alone, centred, for the drop (scene 2.133 s). Then it moves left on an arc
+        // (x eases both ways, y rises then settles) while the comment enters: overlapping action.
+        tl.set("#g-mark", { scale: 1.35, transformOrigin: "50% 50%" }, 0);
+        tl.to("#g-mark", { x: -500, scale: 1, duration: 0.75, ease: "power2.inOut" }, 2.3);
+        tl.to("#g-mark", { keyframes: [{ y: -90, duration: 0.38, ease: "sine.out" }, { y: -50, duration: 0.37, ease: "sine.in" }] }, 2.3);
+        tl.to("#g-state", { x: -500, y: -130, duration: 0.75, ease: "power2.inOut" }, 2.36);
+        tl.fromTo("#g-card", { x: 140, opacity: 0, filter: "blur(12px)" }, { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 2.55);
+        tl.fromTo("#g-card", { scaleY: 1 }, { keyframes: [{ scaleY: 0.97, duration: 0.06, ease: "none" }, { scaleY: 1, duration: 0.3, ease: "elastic.out(1, 0.7)" }], transformOrigin: "50% 0%" }, 2.75);
+        tl.set("#g-pass", { opacity: 0 }, 0);
+        tl.fromTo(reg, { scaleY: 0, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.3, stagger: 0.02, ease: "power3.out" }, 2.9);
+        tl.set(fix, { scaleY: 0, transformOrigin: "50% 100%" }, 0);
+        // 2.4 s on the headline before the scroll: time to read BLOCKED and the delta before the flips.
+        tl.fromTo("#g-hl1", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 3.3);
+        tl.to("#g-block", { y: -300, duration: 0.7, ease: "power2.inOut" }, 5.7);
+        tl.fromTo("#g-hl2", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 6.5);
+        // Push 2 arrives, the cases run again (a tick each, 0.1 s apart from 8.6 = film 27.1).
+        tl.fromTo("#g-chip", { y: 40, opacity: 0, filter: "blur(8px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, 8.3);
+        reg.forEach((el, k) => tl.to(el, { scaleY: 0, duration: 0.08, ease: "power3.in" }, 8.6 + k * 0.1 - 0.04));
+        fix.forEach((el, k) => tl.fromTo(el, { scaleY: 0 }, { keyframes: [{ scaleY: 1.1, duration: 0.1, ease: "power3.out" }, { scaleY: 1, duration: 0.1, ease: "power2.inOut" }] }, 8.6 + k * 0.1));
+        tl.to("#g-block", { y: 0, duration: 0.5, ease: "power2.inOut" }, 10.05);
+        // The same comment is edited in place on scene 10.833 s (film frame 880): BLOCKED -> PASSED.
+        tl.to("#g-block", { opacity: 0, filter: "blur(8px)", duration: 0.067, ease: "power2.in" }, 10.8);
+        tl.fromTo("#g-pass", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.067, ease: "power2.out" }, 10.8);
+        tl.fromTo("#g-card", { scale: 1 }, { keyframes: [{ scale: 1.012, duration: 0.05, ease: "power2.out" }, { scale: 1, duration: 0.3, ease: "power2.out" }], transformOrigin: "50% 50%" }, 10.833);
+        tl.fromTo("#g-hl3", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 11.1);
+        // Exits (faster than entrances), then the claim.
+        tl.to(["#g-card"], { x: 90, opacity: 0, filter: "blur(10px)", duration: 0.3, ease: "power3.in" }, 14.3);
+        tl.to(["#g-chip", "#g-ticks", "#g-state", "#g-tele-l"], { y: 40, opacity: 0, duration: 0.25, stagger: 0.03, ease: "power3.in" }, 14.3);
+        tl.to("#g-mark", { x: 560, y: 30, scale: 1.15, duration: 0.8, ease: "power2.inOut" }, 14.35);
+        tl.fromTo("#g-h1 span", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.13, stagger: 0.067, ease: "power2.out" }, 14.75);
+        tl.to("#g-h1 span", { opacity: 0, filter: "blur(6px)", duration: 0.13, stagger: 0.025, ease: "power3.in" }, 18.2);
+        // The wordmark wipes out of the mark after it lands, so the mark and the name read as one sign.
+        tl.to("#g-mark", { x: -440, y: 45, scale: 1.15, duration: 0.85, ease: "power3.inOut" }, 18.4);
+        tl.fromTo("#g-word", { clipPath: "inset(0 100% 0 0)", x: -40 }, { clipPath: "inset(0 0% 0 0)", x: 0, duration: 0.55, ease: "power3.out" }, 19.05);
+        tl.fromTo("#g-cmd", { opacity: 0, filter: "blur(8px)", y: 20 }, { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.35, ease: "expo.out" }, 19.5);
+        chars.forEach((c, i) => tl.fromTo(c, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, 19.75 + i * 0.05));
+        tl.fromTo("#g-endticks", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out" }, 20.6);
+        tl.fromTo("#g-endnote", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power2.out" }, 20.9);
+        window.__timelines["gate"] = tl;
+      });
+    })();
+  </script>
+</template>

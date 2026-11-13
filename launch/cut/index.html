@@ -1,0 +1,62 @@
+<!doctype html>
+<!--
+  The 20 s vertical cut is a second deliverable (BUILD.md M5) that keeps only the film's gate moment,
+  red to green (launch/STORYLINES.md "Vertical cut"). This root file places the one scene and the
+  audio; the thud sits on frame 75 and the click on frame 351, the arm drop and the PASSED edit.
+  Licences: launch/CREDITS.md.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #0B0F0E; }
+      #root { position: relative; width: 100%; height: 100%; background: #0B0F0E; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20" data-fps="30" data-width="1080" data-height="1920">
+      <div id="cut" data-composition-id="cut" data-composition-src="compositions/cut.html" data-start="0" data-duration="20" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+
+      <audio id="bed" class="clip" src="assets/audio/bed.wav" data-start="0" data-duration="20" data-track-index="10" data-volume="1"></audio>
+      <audio id="thud" class="clip" src="assets/audio/thud.mp3" data-start="2.447" data-duration="2.1" data-track-index="13" data-volume="0.6"></audio>
+      <audio id="click" class="clip" src="assets/audio/click.mp3" data-start="11.66" data-duration="0.36" data-track-index="13" data-volume="1.6"></audio>
+      <audio id="tick-run-01" class="clip" src="assets/audio/tick.mp3" data-start="0.057" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-run-02" class="clip" src="assets/audio/tick.mp3" data-start="0.157" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-run-03" class="clip" src="assets/audio/tick.mp3" data-start="0.257" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-run-04" class="clip" src="assets/audio/tick.mp3" data-start="0.357" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-run-05" class="clip" src="assets/audio/tick.mp3" data-start="0.457" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-run-06" class="clip" src="assets/audio/tick.mp3" data-start="0.557" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-run-07" class="clip" src="assets/audio/tick.mp3" data-start="0.657" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-run-08" class="clip" src="assets/audio/tick.mp3" data-start="0.757" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-run-09" class="clip" src="assets/audio/tick.mp3" data-start="0.857" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-run-10" class="clip" src="assets/audio/tick.mp3" data-start="0.957" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-run-11" class="clip" src="assets/audio/tick.mp3" data-start="1.057" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-run-12" class="clip" src="assets/audio/tick.mp3" data-start="1.157" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-run-13" class="clip" src="assets/audio/tick.mp3" data-start="1.257" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-run-14" class="clip" src="assets/audio/tick.mp3" data-start="1.357" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-run-15" class="clip" src="assets/audio/tick.mp3" data-start="1.457" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-01" class="clip" src="assets/audio/tick.mp3" data-start="8.557" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-02" class="clip" src="assets/audio/tick.mp3" data-start="8.657" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-fix-03" class="clip" src="assets/audio/tick.mp3" data-start="8.757" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-04" class="clip" src="assets/audio/tick.mp3" data-start="8.857" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-fix-05" class="clip" src="assets/audio/tick.mp3" data-start="8.957" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-06" class="clip" src="assets/audio/tick.mp3" data-start="9.057" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-fix-07" class="clip" src="assets/audio/tick.mp3" data-start="9.157" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-08" class="clip" src="assets/audio/tick.mp3" data-start="9.257" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-fix-09" class="clip" src="assets/audio/tick.mp3" data-start="9.357" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-10" class="clip" src="assets/audio/tick.mp3" data-start="9.457" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-fix-11" class="clip" src="assets/audio/tick.mp3" data-start="9.557" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-12" class="clip" src="assets/audio/tick.mp3" data-start="9.657" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-fix-13" class="clip" src="assets/audio/tick.mp3" data-start="9.757" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+      <audio id="tick-fix-14" class="clip" src="assets/audio/tick.mp3" data-start="9.857" data-duration="0.18" data-track-index="12" data-volume="2"></audio>
+      <audio id="tick-fix-15" class="clip" src="assets/audio/tick.mp3" data-start="9.957" data-duration="0.18" data-track-index="11" data-volume="2"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

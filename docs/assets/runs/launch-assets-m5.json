@@ -1,0 +1,121 @@
+{
+  "measured_at": "2026-11-12T12:00:26+00:00",
+  "folder": "~/Desktop/casegate-launch-assets",
+  "commands": {
+    "probe": "ffprobe -v error -show_entries format=duration,size:stream=codec_name,profile,pix_fmt,width,height,r_frame_rate,nb_frames,sample_rate,channels -of json FILE",
+    "loudness": "ffmpeg -nostats -i FILE -af ebur128=peak=true -f null - (Summary: I and Peak)",
+    "decode": "ffmpeg -v error -i FILE -f null - (stderr empty = decodes to the end)",
+    "gif_loop": "ffprobe -v error -show_entries stream=nb_frames,r_frame_rate,width,height -of json FILE; loop from the NETSCAPE2.0 block (bytes after it: loop count, 0 = forever)",
+    "png": "sips -g pixelWidth -g pixelHeight FILE"
+  },
+  "files": {
+    "banner-4500x1500.gif": {
+      "bytes": 924747,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 4500,
+            "height": 1500,
+            "r_frame_rate": "25/1",
+            "nb_frames": "130"
+          }
+        ]
+      },
+      "netscape_loop_count": 0
+    },
+    "banner-4500x1500.png": {
+      "bytes": 214447,
+      "pixelWidth": 4500,
+      "pixelHeight": 1500
+    },
+    "launch-cut.mp4": {
+      "bytes": 1540955,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1080,
+            "height": 1920,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "30/1",
+            "nb_frames": "600"
+          },
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_frames": "939"
+          }
+        ],
+        "format": {
+          "duration": "20.000000",
+          "size": "1540955"
+        }
+      },
+      "integrated_lufs": -13.1,
+      "true_peak_dbfs": -1.1,
+      "decode_errors": ""
+    },
+    "launch-film.mp4": {
+      "bytes": 4381073,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "profile": "High",
+            "width": 1920,
+            "height": 1080,
+            "pix_fmt": "yuv420p",
+            "r_frame_rate": "30/1",
+            "nb_frames": "1350"
+          },
+          {
+            "codec_name": "aac",
+            "profile": "LC",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_frames": "2111"
+          }
+        ],
+        "format": {
+          "duration": "45.000000",
+          "size": "4381073"
+        }
+      },
+      "integrated_lufs": -14.2,
+      "true_peak_dbfs": -1.0,
+      "decode_errors": ""
+    },
+    "logo-1000.gif": {
+      "bytes": 956615,
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "width": 1000,
+            "height": 1000,
+            "r_frame_rate": "25/1",
+            "nb_frames": "130"
+          }
+        ]
+      },
+      "netscape_loop_count": 0
+    },
+    "logo-1000.png": {
+      "bytes": 25237,
+      "pixelWidth": 1000,
+      "pixelHeight": 1000
+    }
+  }
+}

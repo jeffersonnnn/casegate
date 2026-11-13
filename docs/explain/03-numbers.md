@@ -31,6 +31,11 @@ Only measured numbers. A value not yet measured is `[TBD: ...]`. Values are roun
 | Site accessibility, Lighthouse 12.8.2 (M4) | 100 on mobile and on desktop | docs/assets/runs/lighthouse-local-mobile-m4.json | field `categories.accessibility.score` = 1 in the mobile file and in `docs/assets/runs/lighthouse-local-desktop-m4.json`; `--only-categories=accessibility` against `http://127.0.0.1:8765/` | 1 page, 2 form factors | a local server, not the deployed URL: Pages is not on yet (M4 human step) |
 | Light banner contrast on `#F4F7F5` | text 17.88:1, grey 4.99:1, fail 4.95:1, arm 3.83:1 (graphic) | scripts/contrast.py | `python3 scripts/contrast.py` (exit 0), rows "light §7"; the same values are in `docs/DESIGN.md` §7 | 5 light pairs | computed, not measured on a screen; the grey holds only at opacity 1 |
 | Dark palette contrast (lowest pairs) | fail on surface 5.86:1, muted on surface 6.61:1; text on bg 16.00:1 | scripts/contrast.py | `python3 scripts/contrast.py`, rows "dark §1" | 10 dark pairs | every dark text pair is at least 4.5:1 |
+| Launch film, measured (M5) | 1920 × 1080, 30 fps, 1350 frames, 45.000000 s, H.264 High yuv420p, AAC LC 48 kHz stereo, no decode error | docs/assets/runs/launch-assets-m5.json | `files."launch-film.mp4".probe` (ffprobe `format.duration`, `streams[].width/height/r_frame_rate/nb_frames`) and `decode_errors` = "" (`ffmpeg -v error -f null`); commands in the file's `commands` | 1 file | target 45.0 s ±0.1 (BUILD.md M5); the file lives in `~/Desktop/casegate-launch-assets/`, not in git |
+| Launch cut, measured (M5) | 1080 × 1920, 30 fps, 600 frames, 20.000000 s, H.264 High yuv420p, AAC LC 48 kHz stereo, no decode error | docs/assets/runs/launch-assets-m5.json | `files."launch-cut.mp4".probe`, `decode_errors` | 1 file | target 20.0 s ±0.1 |
+| Launch video loudness | film −14.2 LUFS, true peak −1.0 dBTP; cut −13.1 LUFS, true peak −1.1 dBTP | docs/assets/runs/launch-assets-m5.json | fields `integrated_lufs`, `true_peak_dbfs` per file (`ffmpeg -af ebur128=peak=true`, Summary I and Peak) | 2 files | target −14 LUFS ±1 and ≤ −1 dBTP (launch/SPEC.md); the cut is 0.1 LU inside the upper bound |
+| Sound sync on the arm drop | 0 frames: film thud peak 20.6336 s = frame 619.01, cut 2.5006 s = frame 75.02 | launch/REVIEW.md | table "Sync": the largest sample in the window, on the delivered files | 2 drops | measured, not heard; the click lands one frame after PASSED on purpose (frame 880.35, 351.35) |
+| Logo and X banner stills (M5) | logo PNG 1000 × 1000; logo GIF 1000 × 1000, 130 frames at 25 fps, loops forever, 956,615 bytes; banner PNG 4500 × 1500; banner GIF 4500 × 1500, 130 frames at 25 fps, loops forever, 924,747 bytes | docs/assets/runs/launch-assets-m5.json | `pixelWidth`/`pixelHeight` (sips), `probe.streams[0]` (ffprobe), `netscape_loop_count` = 0, `bytes` | 4 files | 130 frames at 25 fps = one 5.2 s cycle; each GIF under the 15 MB limit (BUILD.md M5) |
 
 ## Reproduce
 
@@ -47,6 +52,14 @@ M4 checks:
 python3 scripts/contrast.py; echo $?   # the contrast rows, 0
 uv run casegate gate --baseline docs/assets/demo-pr-regression/baseline.json --run docs/assets/demo-pr-regression/casegate-run.json --max-drop 0.08 --plain; echo $?   # 1, term-gate.txt
 npx lighthouse@12 <url> --only-categories=accessibility --output=json --chrome-flags="--headless=new"   # docs/DESIGN.md §8
+```
+
+M5 checks (the launch files are in `~/Desktop/casegate-launch-assets/`):
+
+```bash
+ffprobe -v error -show_entries format=duration:stream=width,height,r_frame_rate,nb_frames -of json ~/Desktop/casegate-launch-assets/launch-film.mp4
+ffmpeg -nostats -i ~/Desktop/casegate-launch-assets/launch-film.mp4 -af ebur128=peak=true -f null - 2>&1 | tail -12   # I and Peak
+sips -g pixelWidth -g pixelHeight ~/Desktop/casegate-launch-assets/logo-1000.png
 ```
 
 A new run gives new values, because the target and the judge are not deterministic. The numbers above are from the committed `evals/baseline.json`.
